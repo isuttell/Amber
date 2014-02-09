@@ -396,6 +396,32 @@
 	_.extend(Vent.prototype, Events);
 	Amber.Vent = new Vent();
 
+
+	/*
+	|--------------------------------------------------------------------------
+	| Views
+	|--------------------------------------------------------------------------
+	| Repository of all created views
+	*/
+
+	Amber.Views = {
+		_views: [],
+
+		_add: function(view){
+			Amber.Views._views.push(view);
+		},
+
+		get: function(cid){
+			return _.find(Amber.Views._views, function(view){
+				return view.cid === cid;
+			});
+		},
+
+		all: function(){
+			return Amber.Views._views;
+		}
+	};
+
 	/*
 	|--------------------------------------------------------------------------
 	| View
@@ -406,6 +432,9 @@
 	var View = Amber.View = function(options)
 	{
 		this.cid = _.uniqueId('view');
+		// Store a list of all the views
+		Amber.Views._add(this);
+
 		options = options || {};
 		_.extend(this, options);
 		this._ensureElement();
