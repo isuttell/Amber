@@ -14,6 +14,10 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		jshint: {
+			Amber: ['Amber.js'],
+			tests: ['test/specs/**/*.js']
+		},
 		jasmine: {
 			build: {
 				src: 'Amber.js',
@@ -35,10 +39,10 @@ module.exports = function(grunt) {
 	*/
 
 	// Default - First compiles/concats css/js then watches for changes
-	grunt.registerTask('default', ['jasmine', 'uglify']);
+	grunt.registerTask('default', ['jshint:Amber', 'jasmine', 'uglify']);
 
 
-	grunt.registerTask('test', ['jasmine']);
+	grunt.registerTask('test', ['jshint:Amber', 'jasmine']);
 
 	grunt.registerTask('build', ['jasmine', 'uglify']);
 

@@ -44,7 +44,7 @@
 			{
 				// Base on Modernizr
 				var div = document.createElement('div');
-				return ('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)
+				return ('draggable' in div) || ('ondragstart' in div && 'ondrop' in div);
 			},
 			touch: function()
 			{
@@ -64,7 +64,7 @@
 				}
 
 				// Tests for vendor specific prop
-				prefixes = ['Moz', 'webkit', 'Webkit', 'Khtml', 'O', 'ms'],
+				prefixes = ['Moz', 'webkit', 'Webkit', 'Khtml', 'O', 'ms'];
 				tag = tag.charAt(0).toUpperCase() + tag.substr(1);
 				for (var i = 0, l = prefixes.length; i < l; i++)
 				{
@@ -200,7 +200,7 @@
 			{
 				return this;
 			}
-			this._events || (this._events = {});
+			this._events = this._events || {};
 			var events = this._events[name] || (this._events[name] = []);
 			events.push(
 			{
@@ -406,7 +406,7 @@
 	var View = Amber.View = function(options)
 	{
 		this.cid = _.uniqueId('view');
-		options || (options = {});
+		options = options || {};
 		_.extend(this, options);
 		this._ensureElement();
 		if(options.$el) {
@@ -631,11 +631,11 @@
 	var Animate = Amber.Animate = {
 		scrollTo: function(selector, offset, easing)
 		{
-			offset || (offset = 0);
+			offset = offet || 0;
 			selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
 			easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
 
- 			//Scroll to section
+			//Scroll to section
 			$('html, body').animate(
 			{
 				scrollTop: selector.offset().top - offset
@@ -670,8 +670,8 @@
 		docElem: window.document.documentElement,
 		getViewportHeight: function()
 		{
-			var client = this.docElem['clientHeight'],
-				inner = window['innerHeight'];
+			var client = this.docElem.clientHeight,
+				inner = window.innerHeight;
 
 			if (client < inner)
 			{
@@ -700,7 +700,7 @@
 			return {
 				top: offsetTop,
 				left: offsetLeft
-			}
+			};
 		},
 		inViewport: function(el, h)
 		{
@@ -708,7 +708,7 @@
 				scrolled = window.pageYOffset || this.docElem.scrollTop,
 				viewed = scrolled + this.getViewportHeight(),
 				elTop = this.getOffset(el).top,
-				elBottom = elTop + elH,
+				elBottom = elTop + elH;
 				// if 0, the element is considered in the viewport as soon as it enters.
 				// if 1, the element is considered in the viewport only when it's fully inside
 				// value in percentage (1 >= h >= 0)
@@ -761,7 +761,7 @@
 				self.resizeTimeout = setTimeout(delayed, 200);
 			};
 			window.addEventListener('scroll', scrollHandler, false);
-			window.addEventListener('resize', resizeHandler, false)
+			window.addEventListener('resize', resizeHandler, false);
 		},
 		_scrollPage: function()
 		{
@@ -781,6 +781,6 @@
 			});
 			this.didScroll = false;
 		}
-	}
+	};
 
 }).call(this);
