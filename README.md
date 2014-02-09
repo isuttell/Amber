@@ -1,8 +1,15 @@
 Amber
 ======
-A modular View system for single page web applications that do not require a RESTful interface.
+A modular View only system for building complex javascript applications. Based upon the [Backbone.js](documentcloud.github.com/backbone/) View system.
 
 [![Build Status](https://travis-ci.org/isuttell/Amber.png?branch=master)](https://travis-ci.org/isuttell/Amber)
+
+
+Goals
+------
+* Provide a simple and modular way to organize code on complex projects
+* Provide an easy way to animate complex interfaces
+* Keep it lean and remove as many dependencies on third party libraries as possible
 
 
 Building
