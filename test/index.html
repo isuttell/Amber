@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Amber Test</title>
+</head>
+<body>
+<div id="amber"></div>
+<script src="vendor/lodash.js" type="application/javascript"></script>
+<script src="vendor/zepto.js" type="application/javascript"></script>
+<script src="../Amber.js" type="application/javascript"></script>
+<script type="application/javascript">
+	var TestView = Amber.View.extend({
+		initialize: function(){
+			console.log('initializeOnLoad');
+			console.log(this.$el);
+			console.log(this.el);
+			console.log(Amber.$ instanceof $);
+		}
+	});
+
+	new TestView({
+		$el: $('#amber'),
+		initializeOnLoad: true
+	});
+</script>
+</body>
+</html>
