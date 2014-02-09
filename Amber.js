@@ -611,19 +611,19 @@
 	*/
 
 	var Animate = Amber.Animate = {
-		scrollTo: function(selector, offset)
+		scrollTo: function(selector, offset, easing)
 		{
 			offset || (offset = 0);
 			selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
+			easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
 
-			//Scroll to section
+ 			//Scroll to section
 			$('html, body').animate(
 			{
 				scrollTop: selector.offset().top - offset
-			}, 500, 'easeInOutExpo');
-
+			}, 500, easing);
 		}
-	}
+	};
 
 	/*
 	|--------------------------------------------------------------------------
