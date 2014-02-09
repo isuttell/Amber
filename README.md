@@ -12,6 +12,13 @@ Goals
 * Keep it lean and remove as many dependencies on third party libraries as possible
 
 
+Requirements
+------
+* [Lo-Dash](lodash.com)
+* [jQuery](http://jquery.com/)
+* [jQuery Easing Plugin](http://gsgd.co.uk/sandbox/jquery/easing/)
+
+
 Building
 --------
 To generate a minified version of the library run the following command:
