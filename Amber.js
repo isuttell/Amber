@@ -101,7 +101,7 @@
 	|
 	*/
 
-	var Format = Amber.Format = {
+	Amber.Format = {
 		numberWithCommas: function(x)
 		{
 			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -136,7 +136,7 @@
 	|
 	*/
 
-	var Browser = Amber.Browser = {
+	Amber.Browser = {
 		iOS: !! navigator.userAgent.match(/iPad|iPhone|iPod/gi),
 		iPhone: !! navigator.userAgent.match(/iPhone/gi),
 		iPad: !! navigator.userAgent.match(/iPad/gi),
@@ -443,7 +443,7 @@
 		{
 			return this;
 		},
-		render: function(options)
+		render: function()
 		{
 			this.trigger('before:render');
 			this.$el.html(_.template(this.template, this.data));
@@ -628,10 +628,10 @@
 	|
 	*/
 
-	var Animate = Amber.Animate = {
+	Amber.Animate = {
 		scrollTo: function(selector, offset, easing)
 		{
-			offset = offet || 0;
+			offset = offset || 0;
 			selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
 			easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
 
@@ -728,7 +728,7 @@
 
 			var self = this;
 
-			this.sections.forEach(function(el, i)
+			this.sections.forEach(function(el)
 			{
 				if (!self.inViewport(el))
 				{
@@ -767,7 +767,7 @@
 		{
 			var self = this;
 
-			this.sections.forEach(function(el, i)
+			this.sections.forEach(function(el)
 			{
 				if (self.inViewport(el, self.options.viewportFactor))
 				{
