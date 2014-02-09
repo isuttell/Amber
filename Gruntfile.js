@@ -15,6 +15,9 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
+			options: {
+				jshintrc: true
+			},
 			Amber: ['Amber.js'],
 			tests: ['test/specs/**/*.js']
 		},
