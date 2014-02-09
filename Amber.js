@@ -487,7 +487,21 @@
 				return string;
 			}
 		},
-		transition: function($to, direction)
+
+
+		/**
+
+			TODO:
+			- Add CSS3 transitions here
+
+		**/
+		/**
+		 * Animate between two full page elements
+		 * @param  {object} targetView  target View
+		 * @param  {string} direction   'forward' || 'back'
+		 * @param  {string} easing      name of easing function
+		 */
+		transition: function(targetView, direction, easing)
 		{
 			var self = this;
 			this.trigger('before:transition');
@@ -503,13 +517,17 @@
 					break;
 			}
 
+			targetView = targetView instanceof Amber.$ ? targetView : Amber.$(targetView);
+			easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
+
 
 			if (Amber.Supports.cssanimations)
 			{
-				$to.$el.addClass('amber-animate-init').removeClass('amber-animate-in');
+				targetView.$el.addClass('amber-animate-init').removeClass('amber-animate-in');
 				this.$el.removeClass('amber-animate-in');
 			}
 
+			//Ensure we don't have stray events floating around
 			this.undelegateEvents();
 
 			/*--------------------------------------------------------------------------
@@ -518,7 +536,7 @@
 			this.$el.animate(
 			{
 				left: ($(window).width()) * (-direction),
-			}, this.transitionTime, 'easeInOutExpo', function()
+			}, this.transitionTime, easing, function()
 			{
 				$(this).hide();
 				self.trigger('after:transition');
@@ -530,19 +548,19 @@
 			*/
 
 			// Initialize the panel
-			$to.initialize();
+			targetView.initialize();
 
-			$to.$el.show().css(
+			targetView.$el.show().css(
 			{
 				left: $(window).width() * direction,
 			}).show().animate(
 			{
 				left: 0,
-			}, this.transitionTime, 'easeInOutExpo', function()
+			}, this.transitionTime, easing, function()
 			{
 				if (Amber.Supports.cssanimations)
 				{
-					$to.$el.addClass('amber-animate-in');
+					targetView.$el.addClass('amber-animate-in');
 				}
 			});
 
