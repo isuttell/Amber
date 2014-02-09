@@ -3,5 +3,11 @@
 	"newcap"    : true,
 	"strict"    : true,
 	"trailing"  : true,
-	"browser"   : true
+	"browser"   : true,
+	"jquery"    : true,
+	"undef"     : true,
+	"unused"    : true,
+	"globals"   : {
+		"Amber": false
+	}
 }
