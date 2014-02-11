@@ -108,7 +108,6 @@
 		},
 		stripTrailingZero: function(x)
 		{
-
 			return x.toString().replace(/\.0/, '');
 		},
 		basicPluralize: function(word, count)
@@ -137,17 +136,17 @@
 	*/
 
 	Amber.Browser = {
-		iOS: !! navigator.userAgent.match(/iPad|iPhone|iPod/gi),
-		iPhone: !! navigator.userAgent.match(/iPhone/gi),
-		iPad: !! navigator.userAgent.match(/iPad/gi),
-		android: !! navigator.userAgent.match(/Android/gi),
-		blackberry: !! navigator.userAgent.match(/BlackBerry/gi),
-		iemobile: !! navigator.userAgent.match(/IEMobile/gi),
-		firefox: !! navigator.userAgent.match(/Firefox/gi),
-		chrome: !! navigator.userAgent.match(/Chrome/gi),
-		safari: !! navigator.userAgent.match(/(Version\/\d\.\d.*Safari)/gi),
-		ie: navigator.userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/gi) || false,
-		initialize: function()
+		iOS        : !! navigator.userAgent.match(/iPad|iPhone|iPod/gi),
+		iPhone     : !! navigator.userAgent.match(/iPhone/gi),
+		iPad       : !! navigator.userAgent.match(/iPad/gi),
+		android    : !! navigator.userAgent.match(/Android/gi),
+		blackberry : !! navigator.userAgent.match(/BlackBerry/gi),
+		iemobile   : !! navigator.userAgent.match(/IEMobile/gi),
+		firefox    : !! navigator.userAgent.match(/Firefox/gi),
+		chrome     : !! navigator.userAgent.match(/Chrome/gi),
+		safari     : !! navigator.userAgent.match(/(Version\/\d\.\d.*Safari)/gi),
+		ie         : navigator.userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/gi) || false,
+		initialize : function()
 		{
 			this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
 			return this;
@@ -164,23 +163,41 @@
 
 	var Events = Amber.Events = {
 		delegateEventSplitter: /^(\S+)\s*(.*)$/,
+
+		/**
+		 * Turn off events for this view
+		 */
 		undelegateEvents: function()
 		{
 			this.$el.off('.delegateEvents' + this.cid);
 			return this;
 		},
+
+		/**
+		 * Attach events to the DOM
+		 */
 		delegateEvents: function()
 		{
+			// Undelegate existing events so we don't double up
 			this.undelegateEvents();
+
 			for (var key in this.events)
 			{
+				// Find the method to call
 				var method = this[this.events[key]];
 
+				// Ensure the right this
+				method = _.bind(method, this);
+
+				// Split the vent name into piecs
 				var match = key.match(this.delegateEventSplitter);
+
 				var eventName = match[1],
 					selector = match[2];
-				method = _.bind(method, this);
+
 				eventName += '.delegateEvents' + this.cid;
+
+				// If not selector is found attach it to the entire view
 				if (selector === '')
 				{
 					this.$el.on(eventName, method);
@@ -192,14 +209,18 @@
 			}
 			return this;
 		},
+
 		// Assign an event to this object
 		// supports multiple event changes
 		on: function(name, callback, context)
 		{
+			// Trigger Event API
 			if (!eventsApi(this, 'on', name, [callback, context]) || !callback)
 			{
 				return this;
 			}
+
+			// Save the event
 			this._events = this._events || {};
 			var events = this._events[name] || (this._events[name] = []);
 			events.push(
@@ -208,11 +229,14 @@
 				context: context,
 				ctx: context || this
 			});
+
 			return this;
 		},
+
 		//Only call the callbackonce
 		once: function(name, callback, context)
 		{
+			// Trigger Event API
 			if (!eventsApi(this, 'once', name, [callback, context]) || !callback)
 			{
 				return this;
@@ -226,6 +250,7 @@
 			once._callback = callback;
 			return this.on(name, once, context);
 		},
+
 		//Turn off an event on this object
 		off: function(name, callback, context)
 		{
@@ -262,7 +287,12 @@
 
 			return this;
 		},
-		//Trigger an event
+
+		/**
+		 * Trigger an event
+		 * @param  {string} name
+		 * @return {this}   return this so we can chain
+		 */
 		trigger: function(name)
 		{
 			if (!this._events)
@@ -286,13 +316,15 @@
 			}
 			return this;
 		},
+
 		//Stop listening to an event
 		stopListening: function(obj, name, callback)
 		{
 			var listeningTo = this._listeningTo;
-			if (!listeningTo) return this;
+			if (!listeningTo) { return this; }
+
 			var remove = !name && !callback;
-			if (!callback && typeof name === 'object') callback = this;
+			if (!callback && typeof name === 'object') { callback = this; }
 			if (obj)(listeningTo = {})[obj._listenId] = obj;
 			for (var id in listeningTo)
 			{
@@ -302,6 +334,11 @@
 			}
 			return this;
 		},
+
+		/**
+		 * If $el is defined then set the element otherwise create
+		 * a new element we can manipulate
+		 */
 		_ensureElement: function()
 		{
 			if (!this.$el)
@@ -405,20 +442,33 @@
 	*/
 
 	Amber.Views = {
-		_views: [],
+		_views : [],
 
+		/**
+		 * Adds a view to the list of views
+		 * @param {object} view an Amber View
+		 */
 		_add: function(view){
-			Amber.Views._views.push(view);
+			this._views.push(view);
 		},
 
+		/**
+		 * Search for a view by its cid
+		 * @param  {string} cid the unique ID of a view
+		 * @return {object}
+		 */
 		get: function(cid){
-			return _.find(Amber.Views._views, function(view){
+			return _.find(this._views, function(view){
 				return view.cid === cid;
 			});
 		},
 
+		/**
+		 * Get a list of all of the views
+		 * @return {[type]} [description]
+		 */
 		all: function(){
-			return Amber.Views._views;
+			return this._views;
 		}
 	};
 
@@ -431,19 +481,23 @@
 
 	var View = Amber.View = function(options)
 	{
+		// Give every view a unique id
 		this.cid = _.uniqueId('view');
+
 		// Store a list of all the views
 		Amber.Views._add(this);
 
+		// Default Options
 		options = options || {};
 		_.extend(this, options);
+
+		// Make sure an element exists we can manipulate
 		this._ensureElement();
-		if(options.$el) {
-			this.setElement(options.$el, false);
-		}
-		if(options.initializeOnLoad === true) {
-			this.initialize();
-		}
+
+		// Initialize the view
+		this.initialize.apply(this, arguments);
+
+		// Delegate the view's events
 		this.delegateEvents();
 	};
 
@@ -454,21 +508,48 @@
 	*/
 	_.extend(View.prototype, Events,
 	{
+		/**
+		 * Default element type
+		 * @type {String}
+		 */
 		tagName: 'div',
+
+		/**
+		 * HTML string to use with _.template
+		 * @type {String}
+		 */
 		template: '',
+
+		/**
+		 * List of events and functions to be called
+		 * @type {Object}
+		 */
 		events: {},
+
+		/**
+		 * Data to be rendered
+		 * @type {Object}
+		 */
 		data: {},
-		initialize: function()
-		{
-			if (this.$el)
-			{
-				this.setElement(this.$el, true);
-			}
-		},
+
+		/**
+		 * Runs when the View is created
+		 */
+		initialize: function() {},
+
+		/**
+		 * Function to parse data
+		 * returns this so we can chain
+		 * with render()
+		 */
 		format: function()
 		{
 			return this;
 		},
+
+		/**
+		 * Default rendering function
+		 */
 		render: function()
 		{
 			this.trigger('before:render');
@@ -476,16 +557,33 @@
 			this.trigger('after:render');
 			return this;
 		},
+
+		/**
+		 * Search for selectors within view $el
+		 * @param  {string} selector jQuery selector
+		 * @return {object}          jQuery object
+		 */
 		$: function(selector)
 		{
 			return this.$el.find(selector);
 		},
+
+		/**
+		 * Removes view
+		 */
 		remove: function()
 		{
 			this.$el.remove();
 			this.stopListening();
 			return this;
 		},
+
+		/**
+		 * Setup el/$el as JS/Jquery elements
+		 * and delegate events
+		 * @param {string || object} element  element to attach to
+		 * @param {boolean} delegate delegate events after we attach?
+		 */
 		setElement: function(element, delegate)
 		{
 			if (this.$el)
@@ -562,11 +660,11 @@
 	|--------------------------------------------------------------------------
 	| Animations
 	|--------------------------------------------------------------------------
-	|
+	| Todo: add easing functions
 	*/
 
 	Amber.Animate = {
-		scrollTo: function(selector, offset, easing)
+		scrollTo: function(selector, easing, offset)
 		{
 			offset = offset || 0;
 			selector = selector instanceof Amber.$ ? selector : Amber.$(selector);

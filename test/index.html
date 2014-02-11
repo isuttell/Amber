@@ -12,7 +12,6 @@
 <script type="application/javascript">
 	var TestView = Amber.View.extend({
 		initialize: function(){
-			console.log('initializeOnLoad');
 			console.log(this.$el);
 			console.log(this.el);
 			console.log(Amber.$ instanceof $);
@@ -22,7 +21,6 @@
 
 	new TestView({
 		$el: $('#amber'),
-		initializeOnLoad: true
 	});
 
 </script>
