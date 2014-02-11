@@ -456,11 +456,8 @@
 	{
 		tagName: 'div',
 		template: '',
-		events:
-		{},
-		data:
-		{},
-		transitionTime: 300,
+		events: {},
+		data: {},
 		initialize: function()
 		{
 			if (this.$el)
@@ -504,95 +501,6 @@
 				this.delegateEvents();
 			}
 			return this;
-		},
-		svgFallback: function(string)
-		{
-			if (!Amber.Supports.svg)
-			{
-				return string.replace(/\.svg/g, '.png');
-			}
-			else
-			{
-				return string;
-			}
-		},
-
-
-		/**
-
-			TODO:
-			- Add CSS3 transitions here
-
-		**/
-		/**
-		 * Animate between two full page elements
-		 * @param  {object} targetView  target View
-		 * @param  {string} direction   'forward' || 'back'
-		 * @param  {string} easing      name of easing function
-		 */
-		transition: function(targetView, direction, easing)
-		{
-			var self = this;
-			this.trigger('before:transition');
-
-			direction = direction || 1;
-			switch (direction)
-			{
-				case 'forward':
-					direction = 1;
-					break;
-				case 'back':
-					direction = -1;
-					break;
-			}
-
-			targetView = targetView instanceof Amber.$ ? targetView : Amber.$(targetView);
-			easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
-
-
-			if (Amber.Supports.cssanimations)
-			{
-				targetView.$el.addClass('amber-animate-init').removeClass('amber-animate-in');
-				this.$el.removeClass('amber-animate-in');
-			}
-
-			//Ensure we don't have stray events floating around
-			this.undelegateEvents();
-
-			/*--------------------------------------------------------------------------
-			| Animate Out
-			*/
-			this.$el.animate(
-			{
-				left: ($(window).width()) * (-direction),
-			}, this.transitionTime, easing, function()
-			{
-				$(this).hide();
-				self.trigger('after:transition');
-			});
-
-
-			/*--------------------------------------------------------------------------
-			| Animate in
-			*/
-
-			// Initialize the panel
-			targetView.initialize();
-
-			targetView.$el.show().css(
-			{
-				left: $(window).width() * direction,
-			}).show().animate(
-			{
-				left: 0,
-			}, this.transitionTime, easing, function()
-			{
-				if (Amber.Supports.cssanimations)
-				{
-					targetView.$el.addClass('amber-animate-in');
-				}
-			});
-
 		}
 	});
 
