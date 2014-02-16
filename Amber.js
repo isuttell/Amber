@@ -949,4 +949,72 @@
         }
     };
 
+    /*
+    |--------------------------------------------------------------------------
+    | Image Preloader
+    |--------------------------------------------------------------------------
+    | Preloads images so we can ensure they are ready to view
+    |
+    */
+
+    /**
+     * Preload images. Takes two optional callbacks
+     * in the options object: done, progress. Done is
+     * always called after all of the images are
+     * loaded or 404'd. Progress is called each time
+     * an image is created
+     *
+     * Amber.Preload('image.jpg', {
+     *    progress: function(percent, current, total){
+     *    },
+     *    done: function(images){
+     *    }
+     * });
+     *
+     * @param {array} images  Takes an array of image src
+     * @param {Object} options Optional done and progress callbacks
+     */
+    Amber.Preload = function(urls, options) {
+        var images,
+            loaded,
+            progress,
+            done;
+
+        if (typeof urls === "string") {
+            urls = [urls];
+        }
+
+        options = options || {};
+
+        images = [];
+        loaded = 0;
+
+        progress = options.progress;
+        done = options.done;
+
+        if (progress) {
+            progress(0, 0, urls.length);
+        }
+
+        var imageDone = function() {
+            loaded++;
+
+            if (progress) {
+                progress(loaded / urls.length, loaded, urls.length);
+            }
+
+            if (loaded === urls.length && options.done) {
+                options.done(images);
+            }
+        };
+
+        _.each(urls, function(src) {
+            var image = new Image();
+            image.src = src;
+            image.onload = imageDone;
+            image.onerror = imageDone;
+            images.push(image);
+        });
+    };
+
 }).call(this);
