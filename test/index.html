@@ -6,12 +6,43 @@
 	<style>
 	html, body {
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		min-height: 100%;
+		height: 100%;
+	}
+	body > section {
+		height: 100%;
+		border-bottom: 5px solid #000 ;
+	}
+	button {
+		display: block;
+		padding: 20px 120px;
+		border: 3px solid #0054e9;
+		background: #0066ff;
+		color: #fff;
+		outline: none;
+		text-align: center;
+		text-transform: uppercase;
+		font-weight: bolder;
+		font-size: 14px;
+		letter-spacing: 0.1em;
 	}
 	</style>
 </head>
 <body>
 <h1>Amber Test</h1>
-<div id="amber"></div>
+<section class="test-section" id="amber-0">
+	<button class="scroll">Next Section</button>
+</section>
+<section class="test-section" id="amber-1">
+	<button class="scroll">Next Section</button>
+</section>
+<section class="test-section" id="amber-2">
+	<button class="scroll">Next Section</button>
+</section>
+<section class="test-section" id="amber-3">
+	<button class="scroll">Next Section</button>
+</section>
+
 <script src="vendor/lodash.js" type="application/javascript"></script>
 <script src="vendor/jquery.js" type="application/javascript"></script>
 <script src="../Amber.js" type="application/javascript"></script>
@@ -25,6 +56,9 @@
 	});
 
 	var TestView = Amber.View.extend({
+		events: {
+			'click .scroll' : 'scroll'
+		},
 		initialize: function(){
 
 			this.model.fetch({
@@ -53,12 +87,23 @@
 					// console.log('error', resp);
 				}
 			});
+		},
+		scroll: function(event){
+			var currentSection = $(event.target).parent().index();
+			targetSection = currentSection;
+			if(!$('#amber-' + targetSection).length){
+				targetSection = 0;
+			}
+			// consol
+			Amber.scrollTo('#amber-' + targetSection);
 		}
 	});
 
-	new TestView({
-		$el: $('#amber'),
-		model : new TestModel()
+	$('body > section').each(function(){
+		new TestView({
+			$el: $(this),
+			model : new TestModel()
+		});
 	});
 
 </script>
