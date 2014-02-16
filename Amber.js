@@ -821,17 +821,19 @@
     | Todo: add easing functions
     */
 
-    Amber.Animate = {
-        scrollTo: function(selector, easing, offset) {
-            offset = offset || 0;
-            selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
-            easing = typeof easing !== 'string' ? 'easeInOutExpo' : easing;
+    Amber.scrollTo = function(selector, options) {
+        selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
 
-            //Scroll to section
-            $('html, body').animate({
-                scrollTop: selector.offset().top - offset
-            }, 500, easing);
-        }
+        //Defaults
+        options = options || {};
+        options.offset = options.offset || 0;
+        options.duration = options.duration || 500;
+        options.easing = options.easing || 'easeInOutExpo';
+
+        //Scroll to selector
+        Amber.$('html, body').animate({
+            scrollTop: selector.offset().top - options.offset
+        }, options.duration, options.easing);
     };
 
     /*
@@ -846,7 +848,7 @@
         - Fix Performance: Currently cuts FPS nearly in half
     */
 
-    var AnimateIn = Amber.Animate.AnimateIn = function(el, options) {
+    var AnimateIn = Amber.AnimateIn = function(el, options) {
         this.el = el;
         this.options = extend(this.defaults, options);
         this._init();
@@ -992,15 +994,11 @@
         progress = options.progress;
         done = options.done;
 
-        if (progress) {
-            progress(0, 0, urls.length);
-        }
-
         var imageDone = function() {
             loaded++;
 
             if (progress) {
-                progress(loaded / urls.length, loaded, urls.length);
+                progress(loaded / urls.length, loaded, urls.length, images[images.length - 1]);
             }
 
             if (loaded === urls.length && options.done) {

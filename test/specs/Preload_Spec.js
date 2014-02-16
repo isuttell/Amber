@@ -73,8 +73,8 @@ describe("Amber.Preload", function() {
             done();
         });
 
-        it('should run the progress callback (n + 1) times ', function(done) {
-            expect(progressTriggered).toBe(images.length + 1);
+        it('should run the progress callback the same amount of times as images ', function(done) {
+            expect(progressTriggered).toBe(images.length);
             done();
         });
 
