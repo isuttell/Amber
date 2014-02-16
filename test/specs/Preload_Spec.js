@@ -81,16 +81,16 @@ describe("Amber.Preload", function() {
         describe('percent argument', function() {
             it('should be >= 0 and <= 1', function(done) {
                 expect(_.max(percents)).toBe(1);
-                expect(_.min(percents)).toBe(0);
+                expect(_.min(percents)).toBeGreaterThan(0);
                 done();
             });
         });
 
         describe('current argument', function() {
-            it('should be equal to the index', function(done) {
+            it('should be equal to the index + 1', function(done) {
                 var result;
                 _.each(currents, function(value, index) {
-                    if (value === index && result !== false) {
+                    if (value === (index + 1) && result !== false) {
                         result = true;
                     } else {
                         result = false;
