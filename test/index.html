@@ -10,18 +10,53 @@
 <script src="vendor/jquery.js" type="application/javascript"></script>
 <script src="../Amber.js" type="application/javascript"></script>
 <script type="application/javascript">
+
+	var TestModel = Amber.Model.extend({
+		url: 'test.json',
+		defaults: {
+			defaultProperty: true
+		}
+	});
+
 	var TestView = Amber.View.extend({
 		initialize: function(){
-			console.log(this.$el);
-			console.log(this.el);
-			console.log(Amber.$ instanceof $);
-			console.log(Amber.Views.all());
+
+			this.model.fetch({
+				success: function(model, resp, options){
+					console.log(model.toJSON());
+					model.clear();
+					console.log(model.toJSON());
+				}, complete: function(model, resp, options) {
+					// console.log('complete');
+				}, error: function(model, resp, options) {
+					// console.log('error', resp);
+				}
+			});
+
+			var otherModel = new TestModel({},{
+				url: 'error.json'
+			});
+
+
+			otherModel.fetch({
+				success: function(model, resp, options){
+					// console.log(typeof model);
+				}, complete: function(model, resp, options) {
+					// console.log('complete');
+				}, error: function(model, resp, options) {
+					// console.log('error', resp);
+				}
+			});
 		}
 	});
 
 	new TestView({
 		$el: $('#amber'),
+		model : new TestModel()
 	});
+
+
+
 
 </script>
 </body>
