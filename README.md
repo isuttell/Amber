@@ -1,6 +1,6 @@
 Amber
 ======
-A modular View only system for building complex javascript applications. Based upon the [Backbone.js](documentcloud.github.com/backbone/) View system.
+A modular read only system for building complex javascript applications. Based heavily upon the [Backbone.js](documentcloud.github.com/backbone/).
 
 [![Build Status](https://travis-ci.org/isuttell/Amber.png?branch=master)](https://travis-ci.org/isuttell/Amber)
 
