@@ -1,4 +1,4 @@
-describe("Amber.Model:success", function() {
+describe("Amber.Model", function() {
     var TestModel = Amber.Model.extend({
         defaults: {
             test: false,
@@ -116,58 +116,59 @@ describe("Amber.Model:success", function() {
         expect(_.size(model.attributes)).toBe(0);
         done();
     });
-});
 
 
-describe("Amber.Model:error", function() {
-    var TestModel = Amber.Model.extend();
+    describe("errors", function() {
+        var TestModel = Amber.Model.extend();
 
-    var model,
-        eventResponses = {};
+        var model,
+            eventResponses = {};
 
-    beforeEach(function(done) {
-        // Reset Model
-        eventResponses.sync = false;
-        eventResponses.success = false;
-        eventResponses.error = false;
-        eventResponses.complete = false;
+        beforeEach(function(done) {
+            // Reset Model
+            eventResponses.sync = false;
+            eventResponses.success = false;
+            eventResponses.error = false;
+            eventResponses.complete = false;
 
-        model = new TestModel({}, {
-            url: 'test/error.json'
+            model = new TestModel({}, {
+                url: 'test/error.json'
+            });
+
+            model.on('sync', function() {
+                eventResponses.sync = true;
+            });
+
+            model.fetch({
+                success: function() {
+                    eventResponses.success = true;
+                },
+                error: function() {
+                    eventResponses.error = true;
+                },
+                complete: function() {
+                    eventResponses.complete = true;
+                    done();
+                }
+            });
         });
 
-        model.on('sync', function() {
-            eventResponses.sync = true;
+        it('should run the "error" callback upon fetch', function(done) {
+            expect(eventResponses.success).toBe(false);
+            expect(eventResponses.error).toBe(true);
+            done();
         });
 
-        model.fetch({
-            success: function() {
-                eventResponses.success = true;
-            },
-            error: function() {
-                eventResponses.error = true;
-            },
-            complete: function() {
-                eventResponses.complete = true;
-                done();
-            }
+        it('should always run the "complete" callback upon fetch', function(done) {
+            expect(eventResponses.complete).toBe(true);
+            done();
         });
-    });
 
-    it('should run the "error" callback upon fetch', function(done) {
-        expect(eventResponses.success).toBe(false);
-        expect(eventResponses.error).toBe(true);
-        done();
-    });
+        it('should not trigger the "sync" model event upon an unsuccessful fetch', function(done) {
+            expect(eventResponses.sync).toBe(false);
+            done();
+        });
 
-    it('should always run the "complete" callback upon fetch', function(done) {
-        expect(eventResponses.complete).toBe(true);
-        done();
-    });
-
-    it('should not trigger the "sync" model event upon an unsuccessful fetch', function(done) {
-        expect(eventResponses.sync).toBe(false);
-        done();
     });
 
 });
