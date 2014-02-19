@@ -10,6 +10,7 @@
 	"globals"   : {
 		"Amber"     : false,
 		"Format"     : false,
-		"Modernizr" : false
+		"Modernizr" : false,
+		"define": false
 	}
 }
