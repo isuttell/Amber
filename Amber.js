@@ -994,7 +994,7 @@
 	var AnimateIn = Amber.AnimateIn = function(el, options)
 	{
 		this.el = el;
-		this.options = extend(this.defaults, options);
+		this.options = _.extend(this.defaults, options);
 		this._init();
 	};
 
