@@ -1,6 +1,6 @@
 {
   "name": "amber",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A modular View only system for building complex javascript applications",
   "repository": {
     "type": "git",
