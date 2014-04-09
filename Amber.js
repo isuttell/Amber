@@ -29,7 +29,7 @@
     "use strict";
 
     //Version
-    Amber.VERSION = '0.3.0';
+    Amber.VERSION = '0.3.1';
 
 
     //Require jQuery/Zepto
@@ -1210,6 +1210,7 @@
      */
     Amber.Preload = function (urls, options)
     {
+        // Setup
         var images,
             loaded,
             progress,
@@ -1226,10 +1227,43 @@
         images = [];
         loaded = 0;
 
-        progress = options.progress;
-        done = options.done;
+        // Check to see if progress and done are actual functions
+        progress = _.isFunction(options.progress) ? options.progress : false;
+        done = _.isFunction(options.done) ? options.done : false;
 
-        var imageDone = function ()
+        /**
+         * Check to see if an image is already loaded
+         * http://stackoverflow.com/a/1977898/2489839
+         * @param  {Object}  img Image Object
+         * @return {Boolean}
+         */
+        var isImageLoaded = function (img)
+        {
+            // During the onload event, IE correctly identifies any images that
+            // weren’t downloaded as not complete. Others should too. Gecko-based
+            // browsers act like NS4 in that they report this incorrectly.
+            if (!img.complete)
+            {
+                return false;
+            }
+
+            // However, they do have two very useful properties: naturalWidth and
+            // naturalHeight. These give the true size of the image. If it failed
+            // to load, either of these should be zero.
+            if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0)
+            {
+                return false;
+            }
+
+            // No other way of checking: assume it’s ok.
+            return true;
+        };
+
+        /**
+         * This is called once for each image and triggers the progress or done
+         * callbacks accordingly
+         */
+        var imageAlways = function ()
         {
             loaded++;
 
@@ -1238,21 +1272,33 @@
                 progress(loaded / urls.length, loaded, urls.length, images[images.length - 1]);
             }
 
-            if (loaded === urls.length && options.done)
+            if (loaded === urls.length && done)
             {
-                options.done(images);
+                done(images);
             }
         };
 
+        // Cycle through each image
         _.each(urls, function (src)
         {
             // Ignore everything that is not a string
             if (typeof src === "string")
             {
+                // Create an unattached image element
                 var image = new Image();
                 image.src = src;
-                image.onload = imageDone;
-                image.onerror = imageDone;
+
+                // Check to see if the image is already loaded otherwise attach events
+                if (!isImageLoaded(image))
+                {
+                    image.onload = imageAlways;
+                    image.onerror = imageAlways;
+                }
+                else
+                {
+                    imageAlways.apply(image);
+                }
+
                 images.push(image);
             }
         });
