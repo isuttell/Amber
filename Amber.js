@@ -29,7 +29,7 @@
     "use strict";
 
     //Version
-    Amber.VERSION = '0.2.0';
+    Amber.VERSION = '0.3.0';
 
 
     //Require jQuery/Zepto
@@ -1118,6 +1118,70 @@
             this.didScroll = false;
         }
     };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SVG Path Animation
+    |--------------------------------------------------------------------------
+    | Animation a SVG "path" from 0% length to 100% length
+    */
+
+    Amber.AnimatePath = {};
+
+    /**
+     * Animate a SVG Path by frame count based on
+     * http://product.voxmedia.com/2013/11/25/5426880/polygon-feature-design-svg-animations-for-fun-and-profit
+     *
+     * @param  {Object}   path         SVG DOM Element
+     * @param  {Number}   totalFrames
+     * @param  {Function} callback     Optional callback when we're done
+     */
+    Amber.AnimatePath.byFrameCount = function (path, totalFrames, callback)
+    {
+        // Throw an error if requestAnimationFrame support isn't detected
+        if (!window.requestAnimationFrame)
+        {
+            throw "Amber.AnimatePath.byFrameCount requires requestAnimationFrame";
+        }
+
+        var currentFrame = 0,
+            pathLength = path.getTotalLength(),
+            frameHandle = 0,
+            progress = 0;
+
+        // Start Path Hidden
+        path.style.strokeDasharray = pathLength + ' ' + pathLength;
+        path.style.strokeDashoffset = pathLength;
+
+        // Called by requestAnimationFrame
+        var draw = function ()
+        {
+            progress = currentFrame / totalFrames;
+
+            if (progress >= 1)
+            {
+                // Finish animation
+                window.cancelAnimationFrame(frameHandle);
+
+                // When we're done check to see if we have a callback
+                if (_.isFunction(callback))
+                {
+                    callback();
+                }
+            }
+            else
+            {
+                currentFrame++;
+                path.style.strokeDashoffset = Math.floor(pathLength * (1 - progress));
+                frameHandle = window.requestAnimationFrame(draw);
+            }
+        };
+
+        // Start the animation cycle
+        draw();
+    };
+
 
     /*
     |--------------------------------------------------------------------------
