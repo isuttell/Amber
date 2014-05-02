@@ -29,7 +29,7 @@
     "use strict";
 
     //Version
-    Amber.VERSION = '0.3.1';
+    Amber.VERSION = '0.3.2';
 
 
     //Require jQuery/Zepto
@@ -145,19 +145,25 @@
     */
 
     Amber.Browser = {
-        iOS: !! navigator.userAgent.match(/iPad|iPhone|iPod/gi),
-        iPhone: !! navigator.userAgent.match(/iPhone/gi),
-        iPad: !! navigator.userAgent.match(/iPad/gi),
-        android: !! navigator.userAgent.match(/Android/gi),
-        blackberry: !! navigator.userAgent.match(/BlackBerry/gi),
-        iemobile: !! navigator.userAgent.match(/IEMobile/gi),
-        firefox: !! navigator.userAgent.match(/Firefox/gi),
-        chrome: !! navigator.userAgent.match(/Chrome/gi),
-        safari: !! navigator.userAgent.match(/(Version\/\d\.\d.*Safari)/gi),
-        ie: navigator.userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/gi) || false,
+        iOS: !! navigator.userAgent.match(/iPad|iPhone|iPod/i),
+        iPhone: !! navigator.userAgent.match(/iPhone/i),
+        iPad: !! navigator.userAgent.match(/iPad/i),
+        android: !! navigator.userAgent.match(/Android/i),
+        blackberry: !! navigator.userAgent.match(/BlackBerry/i),
+        iemobile: !! navigator.userAgent.match(/IEMobile/i),
+        firefox: !! navigator.userAgent.match(/Firefox/i),
+        chrome: !! navigator.userAgent.match(/Chrome/i),
+        safari: !! navigator.userAgent.match(/(Version\/\d\.\d.*Safari)/i),
+        ie: navigator.userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/i) || false,
         initialize: function ()
         {
             this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
+
+            // Get the version number so we can use the <> operators
+            if (this.ie)
+            {
+                this.ie = Math.floor(this.ie[1]);
+            }
             return this;
         }
     }.initialize();
@@ -1054,7 +1060,8 @@
         },
         _init: function ()
         {
-            if (Modernizr.touch)
+            // Disable on touch or older versions IE
+            if ((Amber.Browser.ie && Amber.Browser.ie <= 8) || Modernizr.touch)
             {
                 return;
             }
