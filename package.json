@@ -1,6 +1,6 @@
 {
     "name": "amber",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "A View and Animation system for display only gjavascript applications",
     "homepage": "https://github.com/isuttell/Amber",
     "repository":
