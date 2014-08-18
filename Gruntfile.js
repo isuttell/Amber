@@ -1,5 +1,12 @@
 module.exports = function (grunt)
 {
+
+    // Track the time of each task
+    require('time-grunt')(grunt);
+
+    // Lazy Load
+    require('jit-grunt')(grunt);
+
     // Project configuration.
     grunt.initConfig(
     {
@@ -41,11 +48,22 @@ module.exports = function (grunt)
                     vendor: 'test/vendor/*.js'
                 }
             }
+        },
+        bump:
+        {
+            options:
+            {
+                files: ['package.json'],
+                commit: true,
+                commitMessage: 'Release v%VERSION%',
+                createTag: true,
+                tagName: '%VERSION%',
+                tagMessage: 'Version %VERSION%',
+                pushTo: 'origin',
+                push: true
+            }
         }
     });
-
-    // Automatically load all tasks
-    require('load-grunt-tasks')(grunt);
 
     /*
 	|--------------------------------------------------------------------------
