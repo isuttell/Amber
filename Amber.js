@@ -729,7 +729,7 @@
 
         var params = {
             type: method,
-            dataType: 'json',
+            dataType: 'json'
         };
 
         if (!options.url)
