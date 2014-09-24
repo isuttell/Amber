@@ -778,7 +778,7 @@
         Amber.Views._add(this);
 
         // Default Options
-        options = options ||
+        this.options = options ||
         {};
         _.extend(this, options);
 
