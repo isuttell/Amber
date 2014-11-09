@@ -821,7 +821,7 @@
     return child;
   };
 
-  View.extend = Model.extend = extend;
+  View.extend = extend;
 
   /*
     |--------------------------------------------------------------------------
@@ -1132,9 +1132,9 @@
    * All rights reserved.
    * https://raw.github.com/danro/jquery-easing/master/LICENSE
    * ======================================================== */
-
   Amber.$.easing.jswing = Amber.$.easing.swing;
 
+  /* istanbul ignore next */
   Amber.$.extend(Amber.$.easing, {
     // t: current time, b: begInnIng value, c: change In value, d: duration
 
