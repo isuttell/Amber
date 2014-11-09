@@ -1,4 +1,4 @@
-describe("Amber.Model", function() {
+xdescribe("Amber.Model", function() {
     var TestModel = Amber.Model.extend({
         defaults: {
             test: false,

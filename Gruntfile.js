@@ -11,6 +11,16 @@ module.exports = function (grunt)
     grunt.initConfig(
     {
         pkg: grunt.file.readJSON('package.json'),
+        watch: {
+            Amber: {
+                files: ['Amber.js', 'test/specs/**/*.js'],
+                tasks: ['karma:watch:run', 'jscs', 'lint']
+            },
+            options: {
+                start: true,
+                interrupt: true // Interrupt any running tasks on save
+            }
+        },
         uglify:
         {
             options:
@@ -37,6 +47,16 @@ module.exports = function (grunt)
             tests: ['test/specs/**/*.js'],
             grunt: ['Gruntfile.js']
         },
+        jscs: {
+            options: {
+              config: ".jscsrc"
+            },
+            sol: {
+              files: {
+                src: ["Amber.js"]
+              }
+            }
+        },
         jasmine:
         {
             build:
@@ -46,6 +66,37 @@ module.exports = function (grunt)
                 {
                     specs: 'test/specs/*Spec.js',
                     vendor: 'test/vendor/*.js'
+                }
+            }
+        },
+        karma: {
+            options:
+            {
+                configFile: 'test/karma.conf.js',
+                separator: '',
+                preprocessors:
+                {
+                    'Amber.js': 'coverage'
+                },
+            },
+            build:
+            {
+                options:
+                {
+                    singleRun: true,
+                    browsers: ['PhantomJS'],
+                    logLevel: 'ERROR',
+                    reporters: ['story', 'coverage']
+                }
+            },
+            watch:
+            {
+                options:
+                {
+                    background: true,
+                    browsers: ['PhantomJS'],
+                    logLevel: 'ERROR',
+                    reporters: ['dots', 'html', 'coverage']
                 }
             }
         }
@@ -59,8 +110,8 @@ module.exports = function (grunt)
 	*/
 
     grunt.registerTask('lint', ['jshint:Amber']);
-    grunt.registerTask('test', ['lint', 'jasmine']);
+    grunt.registerTask('test', ['lint', 'karma']);
 
     grunt.registerTask('build', ['test', 'uglify']);
-    grunt.registerTask('default', ['build']);
+    grunt.registerTask('default', ['karma:watch:start', 'watch']);
 };
