@@ -27,6 +27,37 @@
   //Require jQuery/Zepto
   Amber.$ = $;
 
+  /**
+   * Utility Functions
+   *
+   * Make this public so we can test easier
+   *
+   * @type {Object}
+   */
+  Amber._util = {};
+
+  /**
+   * Checks to see if a var is an object
+   *
+   * @param  {Object}  obj variable to test
+   *
+   * @return {Boolean}
+   */
+  var isObject = Amber._util.isObject = function(obj) {
+    return {}.toString.call(obj) === '[object Object]';
+  };
+
+  /**
+   * Checks to see if a var is a string
+   *
+   * @param  {String}  str var to check
+   *
+   * @return {Boolean}     [description]
+   */
+  var isString = Amber._util.isString = function(str) {
+    return {}.toString.call(str) === '[object String]';
+  };
+
   /*
     |--------------------------------------------------------------------------
     | Compability Checks
@@ -54,7 +85,7 @@
         var tag = 'transition';
         var prefixes;
 
-        if (typeof style[tag] == 'string') {
+        if (isString(style[tag])) {
           return true;
         }
 
@@ -62,7 +93,7 @@
         prefixes = ['Moz', 'webkit', 'Webkit', 'Khtml', 'O', 'ms'];
         tag = tag.charAt(0).toUpperCase() + tag.substr(1);
         for (var i = 0, l = prefixes.length; i < l; i++) {
-          if (typeof style[prefixes[i] + tag] == 'string') {
+          if (isString(style[prefixes[i] + tag])) {
             return true;
           }
         }
@@ -294,7 +325,7 @@
       }
 
       var remove = !name && !callback;
-      if (!callback && typeof name === 'object') {
+      if (!callback && isObject(name)) {
         callback = this;
       }
       if (obj) { (listeningTo = {})[obj._listenId] = obj; }
@@ -336,7 +367,7 @@
     if (!name) {
       return true;
     }
-    if (typeof name === 'object') {
+    if (isObject(name)) {
       for (var key in name) {
         obj[action].apply(obj, [key, name[key]].concat(rest));
       }
@@ -429,225 +460,6 @@
     }
   };
 
-  var Model = Amber.Model = function(attributes, options) {
-
-    this.cid = _.uniqueId('model');
-
-    // Default Options
-    options = options || {};
-    _.extend(this, options);
-
-    var attrs = attributes || {};
-
-    this.attributes = _.defaults({}, attrs, _.result(this, 'defaults'));
-
-    this.initialize.apply(this, arguments);
-
-  };
-
-  _.extend(Model.prototype, Events, {
-    defaults: {},
-    initialize: function() {},
-
-    /**
-     * Return a JSON friendly copy of the data
-     * @return {object}
-     */
-    toJSON: function() {
-      return _.clone(this.attributes);
-    },
-
-    /**
-     * Get a specific attribute
-     * @param  {string} attr
-     * @return {any}
-     */
-    get: function(attr) {
-      return this.attributes[attr];
-    },
-
-    /**
-     * Check to see if an attribute exists
-     * @param  {string}  attr
-     * @return {Boolean}
-     */
-    has: function(attr) {
-      return this.get(attr) !== null && typeof this.get(attr) !== 'undefined';
-    },
-
-    /**
-     * Defaults to global sync but may be
-     * overriden on a per model basis
-     * @return {function} defaults to jQuery.aJax
-     */
-    sync: function() {
-      return Amber.sync.apply(this, arguments);
-    },
-
-    /**
-     * Accepts either key, value or an object
-     * and then updates the model. If the silent
-     * option is used it won't trigger any events,
-     * and if the unset option is true it will remove
-     * the attribute(s)
-     * @param {string || object} key     key or object of key/values
-     * @param {string || object} value   the value or options
-     * @param {object} options
-     */
-    set: function(key, value, options) {
-      var attr;
-      var attrs;
-      var unset;
-      var changes;
-      var silent;
-      var current;
-
-      if (key === null || typeof key === 'undefined') {
-        return this;
-      }
-
-      if (typeof key === 'object') {
-        attrs = key;
-        options = value;
-      } else {
-        (attrs = {})[key] = value;
-      }
-
-      options = options || {};
-
-      unset = options.unset;
-      silent = options.silent;
-      changes = [];
-      current = this.attributes;
-
-      // Update the Value
-      for (attr in attrs) {
-        value = attrs[attr];
-
-        if (!_.isEqual(current[attr], value)) {
-          changes.push(attr);
-        }
-        if (unset) {
-          delete current[attr];
-        } else {
-          current[attr] = value;
-        }
-      }
-
-      // Trigger Change Events
-      if (!silent) {
-        this.trigger('change', this, options);
-
-        if (changes.length) {
-          for (var i = 0, l = changes.length; i < l; i++) {
-            this.trigger('change:' + changes[i], this, current[changes[i]], options);
-          }
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Shortcut to unset a specific property in the model
-     * @param  {string} attr    the name of the attribute
-     * @param  {object} options
-     */
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {
-        unset: true
-      }));
-    },
-
-    /**
-     * Empties the model of all attributes
-     * @param  {object} options
-     */
-    clear: function(options) {
-      var attrs = {};
-      for (var key in this.attributes) {
-        attrs[key] = void 0;
-      }
-      return this.set(attrs, _.extend({}, options, {
-        unset: true
-      }));
-    },
-
-    /**
-     * Grabs data from the server, accepts callbacks
-     * for success, error, complete and passes any other
-     * options directly to Amber.ajax
-     * @param  {object} options
-     * @return {object}           xhr object
-     */
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
-
-      var model = this;
-
-      // Ajax Event
-      var success = options.success;
-      options.success = function(resp) {
-        if (success) {
-          model.set(resp, options);
-          success(model, resp, options);
-        }
-        model.trigger('sync', model, resp, options);
-      };
-
-      // Ajax Event
-      var complete = options.complete;
-      options.complete = function(resp) {
-        if (complete) {
-          complete(model, resp, options);
-        }
-      };
-
-      // Ajax Event
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) {
-          error(model, resp, options);
-        }
-      };
-      return this.sync('GET', this, options);
-    }
-  });
-
-  Amber.sync = function(method, model, options) {
-
-    var params = {
-      type: method,
-      dataType: 'json'
-    };
-
-    if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
-    }
-
-    var xhr = options.xhr = Amber.ajax(_.extend(params, options));
-    model.trigger('request', model, xhr, options);
-    return xhr;
-  };
-
-  /**
-   * Defaults to jQuery's ajax
-   */
-  Amber.ajax = function() {
-    return Amber.$.ajax.apply(Amber.$, arguments);
-  };
-
-  /*
-    |--------------------------------------------------------------------------
-    | URL Error Function
-    |--------------------------------------------------------------------------
-    | Throw an error when we don't have an url for fetching
-    */
-
-  var urlError = function() {
-    throw new Error('A "url" property or function must be specified');
-  };
-
   /*
     |--------------------------------------------------------------------------
     | View
@@ -728,11 +540,7 @@
     render: function() {
       this.trigger('before:render');
       var data = {};
-      if (this.model instanceof Amber.Model) {
-        data = this.model.toJSON();
-      } else {
-        data = this.model || {};
-      }
+      data = this.model || {};
       this.$el.html(_.template(this.template, data));
       this.trigger('after:render');
       return this;
@@ -1048,7 +856,7 @@
     var progress;
     var done;
 
-    if (typeof urls === 'string') {
+    if (isString(urls)) {
       urls = [urls];
     }
 
@@ -1105,7 +913,7 @@
     // Cycle through each image
     _.each(urls, function(src) {
       // Ignore everything that is not a string
-      if (typeof src === 'string') {
+      if (isString(src)) {
         // Create an unattached image element
         var image = new Image();
         image.src = src;
