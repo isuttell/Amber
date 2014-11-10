@@ -1,7 +1,7 @@
 {
   "name": "Amber",
   "main": "Amber.js",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "https://github.com/isuttell/Amber",
   "authors": [
     "Isaac Suttell <isaac@isaacsuttell.com>"

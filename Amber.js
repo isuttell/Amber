@@ -22,7 +22,7 @@
   'use strict';
 
   //Version
-  Amber.VERSION = '0.4.0';
+  Amber.VERSION = '0.5.0';
 
   //Require jQuery/Zepto
   Amber.$ = $;
