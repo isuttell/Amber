@@ -603,11 +603,11 @@
   });
 
   /*
-    |--------------------------------------------------------------------------
-    | Extend
-    |--------------------------------------------------------------------------
-    |
-    */
+  |--------------------------------------------------------------------------
+  | Extend
+  |--------------------------------------------------------------------------
+  |
+  */
 
   var extend = function(protoProps, staticProps) {
     var parent = this;
@@ -651,205 +651,12 @@
   View.extend = extend;
 
   /*
-    |--------------------------------------------------------------------------
-    | Animations
-    |--------------------------------------------------------------------------
-    | Todo: add easing functions
-    */
-
-  Amber.scrollTo = function(selector, options) {
-    selector = selector instanceof Amber.$ ? selector : Amber.$(selector);
-
-    //Defaults
-    options = options || {};
-    options.offset = options.offset || 0;
-    options.duration = options.duration || 500;
-    options.easing = options.easing || 'easeInOutExpo';
-
-    //Scroll to selector
-    Amber.$('html, body').stop().animate({
-      scrollTop: selector.offset().top - options.offset
-    }, options.duration, options.easing);
-  };
-
-  /*
-    |--------------------------------------------------------------------------
-    | On Scroll Animate In
-    |--------------------------------------------------------------------------
-    |
-    */
-
-  /*
-        TODO:
-        - Fix Performance: Currently cuts FPS nearly in half
-    */
-
-  var AnimateIn = Amber.AnimateIn = function(el, options) {
-    this.el = el;
-    this.options = _.extend(this.defaults, options);
-    this._init();
-  };
-
-  AnimateIn.prototype = {
-    defaults: {
-      viewportFactor: 0.2
-    },
-    docElem: window.document.documentElement,
-    getViewportHeight: function() {
-      var client = this.docElem.clientHeight;
-      var inner = window.innerHeight;
-
-      if (client < inner) {
-        return inner;
-      } else {
-        return client;
-      }
-    },
-    getOffset: function(el) {
-      var offsetTop = 0;
-      var offsetLeft = 0;
-      do {
-        if (!isNaN(el.offsetTop)) {
-          offsetTop += el.offsetTop;
-        }
-        if (!isNaN(el.offsetLeft)) {
-          offsetLeft += el.offsetLeft;
-        }
-      } while (el === el.offsetParent);
-
-      return {
-        top: offsetTop,
-        left: offsetLeft
-      };
-    },
-    inViewport: function(el, h) {
-      var elH = el.offsetHeight;
-      var scrolled = window.pageYOffset || this.docElem.scrollTop;
-      var viewed = scrolled + this.getViewportHeight();
-      var elTop = this.getOffset(el).top;
-      var elBottom = elTop + elH;
-      // if 0, the element is considered in the viewport as soon as it enters.
-      // if 1, the element is considered in the viewport only when it's fully inside
-      // value in percentage (1 >= h >= 0)
-      h = h || 0;
-
-      return (elTop + elH * h) <= viewed && (elBottom) >= scrolled;
-    },
-    _init: function() {
-      // Disable on touch or older versions IE
-      if ((Amber.Browser.ie && Amber.Browser.ie <= 8) || Modernizr.touch) {
-        return;
-      }
-
-      this.sections = Array.prototype.slice.call(this.el.querySelectorAll('.amber-animate-section'));
-      this.didScroll = false;
-
-      var self = this;
-
-      this.sections.forEach(function(el) {
-        if (!self.inViewport(el)) {
-          $(el).addClass('amber-animate-section-init');
-        }
-      });
-      var scrollHandler = function() {
-        //Throttle
-        if (!self.didScroll) {
-          self.didScroll = true;
-          setTimeout(function() {
-            self._scrollPage();
-          }, 100);
-        }
-      };
-      var resizeHandler = function() {
-        function delayed() {
-          self._scrollPage();
-          self.resizeTimeout = null;
-        }
-        if (self.resizeTimeout) {
-          clearTimeout(self.resizeTimeout);
-        }
-        self.resizeTimeout = setTimeout(delayed, 200);
-      };
-      window.addEventListener('scroll', scrollHandler, false);
-      window.addEventListener('resize', resizeHandler, false);
-    },
-    _scrollPage: function() {
-      var self = this;
-
-      this.sections.forEach(function(el) {
-        if (self.inViewport(el, self.options.viewportFactor)) {
-          $(el).addClass('amber-animate-section-animate');
-        } else {
-          $(el).addClass('amber-animate-section-init');
-          $(el).removeClass('amber-animate-section-animate');
-        }
-      });
-      this.didScroll = false;
-    }
-  };
-
-  /*
-    |--------------------------------------------------------------------------
-    | SVG Path Animation
-    |--------------------------------------------------------------------------
-    | Animation a SVG "path" from 0% length to 100% length
-    */
-
-  Amber.AnimatePath = {};
-
-  /**
-   * Animate a SVG Path by frame count based on
-   * http://product.voxmedia.com/2013/11/25/5426880/polygon-feature-design-svg-animations-for-fun-and-profit
-   *
-   * @param  {Object}   path         SVG DOM Element
-   * @param  {Number}   totalFrames
-   * @param  {Function} callback     Optional callback when we're done
-   */
-  Amber.AnimatePath.byFrameCount = function(path, totalFrames, callback) {
-    // Throw an error if requestAnimationFrame support isn't detected
-    if (!window.requestAnimationFrame) {
-      throw 'Amber.AnimatePath.byFrameCount requires requestAnimationFrame';
-    }
-
-    var currentFrame = 0;
-    var pathLength = path.getTotalLength();
-    var frameHandle = 0;
-    var progress = 0;
-
-    // Start Path Hidden
-    path.style.strokeDasharray = pathLength + ' ' + pathLength;
-    path.style.strokeDashoffset = pathLength;
-
-    // Called by requestAnimationFrame
-    var draw = function() {
-      progress = currentFrame / totalFrames;
-
-      if (progress >= 1) {
-        // Finish animation
-        window.cancelAnimationFrame(frameHandle);
-
-        // When we're done check to see if we have a callback
-        if (_.isFunction(callback)) {
-          callback();
-        }
-      } else {
-        currentFrame++;
-        path.style.strokeDashoffset = Math.floor(pathLength * (1 - progress));
-        frameHandle = window.requestAnimationFrame(draw);
-      }
-    };
-
-    // Start the animation cycle
-    draw();
-  };
-
-  /*
-    |--------------------------------------------------------------------------
-    | Image Preloader
-    |--------------------------------------------------------------------------
-    | Preloads images so we can ensure they are ready to view
-    |
-    */
+  |--------------------------------------------------------------------------
+  | Image Preloader
+  |--------------------------------------------------------------------------
+  | Preloads images so we can ensure they are ready to view
+  |
+  */
 
   /**
    * Preload images. Takes two optional callbacks
