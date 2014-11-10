@@ -30,7 +30,6 @@ describe("Amber.Events", function() {
 		expect(triggered).toBeTruthy();
 	});
 
-
 	it("should be able to pass data", function() {
 		var result = false,
 			expected = true;
@@ -44,6 +43,16 @@ describe("Amber.Events", function() {
 		expect(result).toBe(expected);
 	});
 
+	it("should should return this if theres no callback", function() {
+		var result = false,
+			expected = true;
+
+		view.on('test');
+		view.once('test2');
+
+		expect(typeof view._events).toBe('undefined');
+	});
+
 	it("should be able listen to events within a view", function() {
 		var result = false,
 			expected = true;
@@ -53,6 +62,22 @@ describe("Amber.Events", function() {
 		});
 
 		view.trigger('test:view', expected);
+
+		expect(result).toBe(expected);
+	});
+
+	it("should be able to trigger multiple events at the same time", function() {
+		var result = 0,
+			expected = 3;
+
+		view.on('add1', function(){
+			result += 1;
+		});
+		view.on('add2', function(){
+			result += 2;
+		});
+
+		view.trigger('add1 add2');
 
 		expect(result).toBe(expected);
 	});

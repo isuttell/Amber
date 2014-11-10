@@ -13,7 +13,7 @@ describe("_util", function() {
           str: ''
         };
 
-        describe('isString', function() {
+        xdescribe('isObject', function() {
             it('should check if a variable is a object', function() {
                 for(var test in tests) {
                     expect(Amber._util.isObject(tests[test])).toBe(test === 'obj');

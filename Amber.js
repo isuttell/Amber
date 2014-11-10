@@ -43,9 +43,9 @@
    *
    * @return {Boolean}
    */
-  var isObject = Amber._util.isObject = function(obj) {
-    return {}.toString.call(obj) === '[object Object]';
-  };
+  // var isObject = Amber._util.isObject = function(obj) {
+  //   return {}.toString.call(obj) === '[object Object]';
+  // };
 
   /**
    * Checks to see if a var is a string
@@ -316,37 +316,11 @@
         return this;
       }
       var events = this._events[name];
-      var allEvents = this._events.all;
+
       if (events) {
         triggerEvents(events, args);
       }
-      if (allEvents) {
-        triggerEvents(allEvents, arguments);
-      }
-      return this;
-    },
 
-    //Stop listening to an event
-    stopListening: function(obj, name, callback) {
-      var listeningTo = this._listeningTo;
-      if (!listeningTo) {
-        return this;
-      }
-
-      var remove = !name && !callback;
-      if (!callback && isObject(name)) {
-        callback = this;
-      }
-      if (obj) {
-        (listeningTo = {})[obj._listenId] = obj;
-      }
-      for (var id in listeningTo) {
-        obj = listeningTo[id];
-        obj.off(name, callback, this);
-        if (remove || _.isEmpty(obj._events)) {
-          delete this._listeningTo[id];
-        }
-      }
       return this;
     },
 
@@ -377,21 +351,13 @@
 
   /**
    * Implement fancy features of the Events API such as multiple event names
-   * "change blur" and jQuery-style event maps {change: action} in terms
-   * of the existing API.
+   * "change blur"
    */
   var eventsApi = function(obj, action, name, rest) {
     if (!name) {
       return true;
     }
-    if (isObject(name)) {
-      for (var key in name) {
-        if (name.hasOwnProperty(key)) {
-          obj[action].apply(obj, [key, name[key]].concat(rest));
-        }
-      }
-      return false;
-    }
+
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, l = names.length; i < l; i++) {
@@ -577,7 +543,6 @@
      */
     remove: function() {
       this.$el.remove();
-      this.stopListening();
       return this;
     },
 
