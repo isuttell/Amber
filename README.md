@@ -1,15 +1,8 @@
 Amber
 ======
-A modular read only system for building complex javascript applications. Based heavily upon the [Backbone.js](documentcloud.github.com/backbone/).
+A modular view system for building javascript applications. Based upon the [Backbone.js](documentcloud.github.com/backbone/).
 
 [![Build Status](https://travis-ci.org/isuttell/Amber.png?branch=master)](https://travis-ci.org/isuttell/Amber)
-
-
-Goals
-------
-* Provide a simple and modular way to organize code on complex projects
-* Provide an easy way to animate complex interfaces
-* Keep it lean and remove as many dependencies on third party libraries as possible
 
 
 Requirements
@@ -20,23 +13,76 @@ Requirements
 
 Building
 --------
-To generate a minified version of the library run the following command:
-
-````
-grunt build
-````
+First run `npm install` to install the dev dependencies. Then to generate a minified version of the library run the following command: `grunt build`
 
 
 Testing
 --------
-To run the full gamut of tests, use the following command:
+First run `npm install` to install the dev dependencies. Then to run the full gamut of tests, use the following command: `grunt test`
 
-````
-grunt test
-````
 
 Documentation
 ======
+
+Amber.View
+----------
+
+````
+var ExampleView = Amber.View.Extend({
+	/**
+	 * This is the element the view will isolate it's scope to
+	 *
+	 * @type {Object}
+	 */
+	$el: $('.view-container'),
+
+	/**
+	 * Lodash Inline Template
+	 *
+	 * @type {String}
+	 */
+	template: $('.view-template').html(),
+
+	/**
+	 * The following events will be connected when the view
+	 * is initilized
+	 *
+	 * @type {Object}
+	 */
+	events: {
+		'click .button' : 'buttonEvent'
+	},
+
+	/**
+	 * This event is called when a .button is clicked
+	 *
+	 * @param  {MouseEvent}   event
+	 */
+	buttonEvent: function(event) {
+		console.log('.button has been clicked');
+	},
+
+	/**
+	 * This function is called when a view is created
+	 */
+	initialize: function() {
+		// Listen for a custom event
+		this.on('after:render', function() {
+			console.log('View rendered');
+		});
+
+		// This is a good place to render your views initial state
+		this.render();
+
+		// Trigger custom event
+		this.trigger('after:render');
+
+	}
+})
+
+// Create an instance of the view
+var view = new ExampleView();
+````
 
 
 Amber.Format
@@ -52,7 +98,6 @@ Basic formating functions
 	var stripZero = Amber.Format.stripTrailingZero(5.0); // Returns '5'
 	var plural = Amber.Format.basicPluralize('word', 5); // Returns 'words'
 ````
-
 
 Amber.Browser
 ------
@@ -76,7 +121,6 @@ User Agent Detection
 	}
 ````
 
-
 Amber.Supports
 ------
 Feature detection
@@ -91,19 +135,6 @@ Feature detection
 	if(Amber.Supports.svg) {
 		// Returns true if we detected the browser supports SVGs
 	}
-````
-
-
-Amber.scrollTo
-------
-Scroll to a specific element on a page
-
-````
-	Amber.scrollTo('#target', {
-		offset: 0, // Subtract this from the offset().top of the '#target'
-		duration: 500, // The length of the animation
-		easing: 'easeInOutExpo' // Ease function
-	});
 ````
 
 Amber.Preload
@@ -123,3 +154,7 @@ Image preloader with progress updates each time an image has loaded. The `progre
 		}
 	});
 ````
+
+To do
+======
+* Improve Documentation
