@@ -19,7 +19,14 @@ describe("Amber.Browser", function() {
 
 
 	it("should detect mobile", function() {
-		expect(Amber.Browser.mobile).toBeDefined();
+		Amber.Browser.check('iPhone');
+		expect(Amber.Browser.mobile).toBe(true);
+	});
+
+	it("should detect IE", function() {
+		Amber.Browser.check('Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))');
+		expect(Amber.Browser.ie).toBeTruthy();
+		expect(Amber.Browser.ie).toBe(9);
 	});
 
 });
