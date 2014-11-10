@@ -1,0 +1,26 @@
+{
+  "name": "Amber",
+  "main": "Amber.js",
+  "version": "0.4.0",
+  "homepage": "https://github.com/isuttell/Amber",
+  "authors": [
+    "Isaac Suttell <isaac@isaacsuttell.com>"
+  ],
+  "description": "A View system for javascript applications",
+  "keywords": [
+    "view",
+    "preloader"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "test",
+    ".gitignore",
+    ".jshintrc",
+    ".jscsrc",
+    ".travis.yml",
+    ".coveralls.yml",
+    "Gruntfile.js",
+    "package.json"
+  ]
+}

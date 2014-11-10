@@ -1,7 +1,7 @@
 {
   "name": "amber",
   "version": "0.4.0",
-  "description": "A View and Animation system for display only javascript applications",
+  "description": "A View system for javascript applications",
   "homepage": "https://github.com/isuttell/Amber",
   "repository": {
     "type": "git",
