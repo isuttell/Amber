@@ -109,7 +109,9 @@
     },
     initialize: function() {
       for (var prop in this.tests) {
-        this[prop] = _.result(this.tests, prop);
+        if (this.tests.hasOwnProperty(prop)) {
+          this[prop] = _.result(this.tests, prop);
+        }
       }
       return this;
     }
@@ -197,25 +199,27 @@
       this.undelegateEvents();
 
       for (var key in this.events) {
-        // Find the method to call
-        var method = this[this.events[key]];
+        if (this.events.hasOwnProperty(key)) {
+          // Find the method to call
+          var method = this[this.events[key]];
 
-        // Ensure the right this
-        method = _.bind(method, this);
+          // Ensure the right this
+          method = _.bind(method, this);
 
-        // Split the vent name into piecs
-        var match = key.match(this.delegateEventSplitter);
+          // Split the vent name into piecs
+          var match = key.match(this.delegateEventSplitter);
 
-        var eventName = match[1];
-        var selector = match[2];
+          var eventName = match[1];
+          var selector = match[2];
 
-        eventName += '.delegateEvents' + this.cid;
+          eventName += '.delegateEvents' + this.cid;
 
-        // If not selector is found attach it to the entire view
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
+          // If not selector is found attach it to the entire view
+          if (selector === '') {
+            this.$el.on(eventName, method);
+          } else {
+            this.$el.on(eventName, selector, method);
+          }
         }
       }
       return this;
@@ -267,7 +271,9 @@
       var j;
       var k;
 
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) { return this; }
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) {
+        return this;
+      }
       if (!name && !callback && !context) {
         this._events = {};
         return this;
@@ -275,7 +281,7 @@
       names = name ? [name] : _.keys(this._events);
       for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
-        if (events == this._events[name]) {
+        if (events === this._events[name]) {
           this._events[name] = retain = [];
           if (callback || context) {
             for (j = 0, k = events.length; j < k; j++) {
@@ -286,7 +292,9 @@
               }
             }
           }
-          if (!retain.length) { delete this._events[name]; }
+          if (!retain.length) {
+            delete this._events[name];
+          }
         }
       }
 
@@ -328,11 +336,15 @@
       if (!callback && isObject(name)) {
         callback = this;
       }
-      if (obj) { (listeningTo = {})[obj._listenId] = obj; }
+      if (obj) {
+        (listeningTo = {})[obj._listenId] = obj;
+      }
       for (var id in listeningTo) {
         obj = listeningTo[id];
         obj.off(name, callback, this);
-        if (remove || _.isEmpty(obj._events)) { delete this._listeningTo[id]; }
+        if (remove || _.isEmpty(obj._events)) {
+          delete this._listeningTo[id];
+        }
       }
       return this;
     },
@@ -344,8 +356,12 @@
     _ensureElement: function() {
       if (!this.$el) {
         var attrs = _.extend({}, _.result(this, 'attributes'));
-        if (this.id) { attrs.id = _.result(this, 'id'); }
-        if (this.className) { attrs['class'] = _.result(this, 'className'); }
+        if (this.id) {
+          attrs.id = _.result(this, 'id');
+        }
+        if (this.className) {
+          attrs['class'] = _.result(this, 'className');
+        }
         var $el = Amber.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
         this.setElement($el, false);
       } else {
@@ -369,7 +385,9 @@
     }
     if (isObject(name)) {
       for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
+        if (name.hasOwnProperty(key)) {
+          obj[action].apply(obj, [key, name[key]].concat(rest));
+        }
       }
       return false;
     }
@@ -388,24 +406,8 @@
     var ev;
     var i = -1;
     var l = events.length;
-    var a1 = args[0];
-    var a2 = args[1];
-    var a3 = args[2];
-    switch (args.length) {
-      case 0:
-        while (++i < l) { (ev = events[i]).callback.call(ev.ctx); }
-        return;
-      case 1:
-        while (++i < l) { (ev = events[i]).callback.call(ev.ctx, a1); }
-        return;
-      case 2:
-        while (++i < l) { (ev = events[i]).callback.call(ev.ctx, a1, a2); }
-        return;
-      case 3:
-        while (++i < l) { (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); }
-        return;
-      default:
-        while (++i < l) { (ev = events[i]).callback.apply(ev.ctx, args); }
+    while (++i < l) {
+      (ev = events[i]).callback.apply(ev.ctx, args);
     }
   };
 
@@ -620,7 +622,9 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) { _.extend(child.prototype, protoProps); }
+    if (protoProps) {
+      _.extend(child.prototype, protoProps);
+    }
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
@@ -696,7 +700,7 @@
         if (!isNaN(el.offsetLeft)) {
           offsetLeft += el.offsetLeft;
         }
-      } while (el == el.offsetParent);
+      } while (el === el.offsetParent);
 
       return {
         top: offsetTop,
@@ -1011,13 +1015,13 @@
       return (t === 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
     },
     easeOutExpo: function(x, t, b, c, d) {
-      return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+      return (t === d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
     },
     easeInOutExpo: function(x, t, b, c, d) {
       if (t === 0) {
         return b;
       }
-      if (t == d) {
+      if (t === d) {
         return b + c;
       }
       if ((t /= d / 2) < 1) {
@@ -1044,7 +1048,7 @@
       if (t === 0) {
         return b;
       }
-      if ((t /= d) == 1) {
+      if ((t /= d) === 1) {
         return b + c;
       }
       if (!p) {
@@ -1065,7 +1069,7 @@
       if (t === 0) {
         return b;
       }
-      if ((t /= d) == 1) {
+      if ((t /= d) === 1) {
         return b + c;
       }
       if (!p) {
@@ -1086,7 +1090,7 @@
       if (t === 0) {
         return b;
       }
-      if ((t /= d / 2) == 2) {
+      if ((t /= d / 2) === 2) {
         return b + c;
       }
       if (!p) {
