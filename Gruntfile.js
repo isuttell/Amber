@@ -110,7 +110,7 @@ module.exports = function (grunt)
 	*/
 
     grunt.registerTask('lint', ['jshint:Amber']);
-    grunt.registerTask('test', ['lint', 'karma']);
+    grunt.registerTask('test', ['lint', 'jscs', 'karma']);
 
     grunt.registerTask('build', ['test', 'uglify']);
     grunt.registerTask('default', ['karma:watch:start', 'watch']);

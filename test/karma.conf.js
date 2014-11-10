@@ -33,13 +33,13 @@ module.exports = function(config)
             dir: 'test/coverage/',
             reporters: [
                 { type: 'html', subdir: 'html' },
-                { type: 'lcovonly', subdir: '.'},
+                { type: 'lcovonly', subdir: 'lcov'},
                 { type: 'text-summary' },
             ]
         },
 
         htmlReporter: {
-            outputDir: 'test/karma/',
+            outputDir: 'test/reports/',
             templatePath: __dirname + '/reportTemplate.html'
         },
 
