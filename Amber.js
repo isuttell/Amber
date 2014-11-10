@@ -281,7 +281,8 @@
       names = name ? [name] : _.keys(this._events);
       for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
-        if (events === this._events[name]) {
+        events = this._events[name];
+        if (events) {
           this._events[name] = retain = [];
           if (callback || context) {
             for (j = 0, k = events.length; j < k; j++) {
@@ -436,6 +437,7 @@
 
     /**
      * Adds a view to the list of views
+     *
      * @param {object} view an Amber View
      */
     _add: function(view) {
@@ -444,6 +446,7 @@
 
     /**
      * Search for a view by its cid
+     *
      * @param  {string} cid the unique ID of a view
      * @return {object}
      */
@@ -455,10 +458,31 @@
 
     /**
      * Get a list of all of the views
-     * @return {[type]} [description]
+     *
+     * @return {Array} all current views
      */
     all: function() {
       return this._views;
+    },
+
+    /**
+     * Remove all or a specific view
+     *
+     * @param    {string}   cid    view ID
+     */
+    _clear: function(cid) {
+      if (isString(cid)) {
+        var index = _.findIndex(this._views, function(view) {
+            return view.cid === cid;
+          });
+        this._views[index].remove();
+        this._views.splice(index, 1);
+      } else {
+        for (var i = 0; i < this._views.length; i++) {
+          this._views[i].remove();
+        }
+        this._views = [];
+      }
     }
   };
 
@@ -526,15 +550,6 @@
      * Runs when the View is created
      */
     initialize: function() {},
-
-    /**
-     * Function to parse data
-     * returns this so we can chain
-     * with render()
-     */
-    format: function() {
-      return this;
-    },
 
     /**
      * Default rendering function

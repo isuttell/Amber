@@ -5,6 +5,7 @@ describe("Amber.View", function() {
 
     it('should have a this.$ function', function() {
         expect(_.isFunction(view.$)).toBe(true);
+        expect(view.$('.test') instanceof $).toBe(true);
     });
 
     it('should have a this.remove function', function() {

@@ -1,7 +1,12 @@
 describe("Amber.Events", function() {
 	var div = document.createElement('div');
 
-	var TestView = Amber.View.extend();
+	var TestView = Amber.View.extend({
+			events: {
+				'click .test' : 'fakeEvent'
+			},
+			fakeEvent: function(){}
+		});
 
 	beforeEach(function(){
 		view = new TestView();
@@ -39,7 +44,6 @@ describe("Amber.Events", function() {
 		expect(result).toBe(expected);
 	});
 
-
 	it("should be able listen to events within a view", function() {
 		var result = false,
 			expected = true;
@@ -53,5 +57,68 @@ describe("Amber.Events", function() {
 		expect(result).toBe(expected);
 	});
 
+	describe('once', function(){
+		it("should listen to an event once", function() {
+			var result = false,
+				expected = true;
+
+			view.once('test:view', function(data){
+				result = data;
+			});
+
+			view.trigger('test:view', expected);
+			view.trigger('test:view', false);
+
+			expect(result).toBe(expected);
+		});
+	});
+
+	describe('off', function(){
+		beforeEach(function() {
+			// Reset
+			view.off();
+		});
+
+		it("should clear all events", function() {
+			var result = false,
+				expected = false;
+
+			view.on('test:view', function(data){
+				result = data;
+			});
+
+			view.off();
+			view.trigger('test:view', true);
+
+			expect(result).toBe(expected);
+		});
+
+		it("should clear one event", function() {
+			var result = false,
+				expected = false;
+
+			view.on('test:view', function(data){
+				result = data;
+			});
+
+			view.off('test:view');
+			view.trigger('test:view', true);
+
+			expect(result).toBe(expected);
+		});
+	});
+
+
+	it('should delegate events', function() {
+		spyOn($.fn,'on');
+		view.delegateEvents();
+		expect($.fn.on).toHaveBeenCalled();
+	});
+
+	it('should undelegate events', function() {
+		spyOn($.fn,'off');
+		view.delegateEvents();
+		expect($.fn.off).toHaveBeenCalled();
+	});
 
 });
