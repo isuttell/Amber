@@ -43,9 +43,9 @@
    *
    * @return {Boolean}
    */
-  // var isObject = Amber._util.isObject = function(obj) {
-  //   return {}.toString.call(obj) === '[object Object]';
-  // };
+  var isObject = Amber._util.isObject = function(obj) {
+    return {}.toString.call(obj) === '[object Object]';
+  };
 
   /**
    * Checks to see if a var is a string
@@ -56,6 +56,79 @@
    */
   var isString = Amber._util.isString = function(str) {
     return {}.toString.call(str) === '[object String]';
+  };
+
+  /**
+   * Checks to see if a var is a function or object
+   *
+   * @param  {Mixed}  obj  var to check
+   *
+   * @return {Boolean}
+   */
+  var isIterable = Amber._util.isIterable = function(obj) {
+    var result = {}.toString.call(obj);
+    return result === '[object Object]' || result === '[object Function]';
+  };
+
+  /**
+   * Extends multiple objects
+   *
+   * @param     {Object}    object     input
+   * @param     {...Object}    source    defaults
+   *
+   * @return    {Object}
+   */
+  var assign = Amber._util.assign = function(object) {
+    // This is stores the resulting object
+    var result = object;
+
+    // If it's not an object/function bail
+    if (!isIterable(result)) {
+      return result;
+    }
+
+    var argsLength = arguments.length;
+
+    // Start this on the section argument
+    var argIndex = 0;
+
+    // Loop through the arguments
+    while (++argIndex < argsLength) {
+      var iterable = arguments[argIndex];
+      if (isIterable(iterable)) {
+        var objIndex = -1;
+        var objProps = keys(iterable);
+        var objLength = objProps.length;
+
+        // Loop through each argument
+        while (++objIndex < objLength) {
+          var index = objProps[objIndex];
+          result[index] = iterable[index];
+        }
+      }
+    }
+
+    return result;
+  };
+
+  /**
+   * Returns the keys/indexs from an object
+   *
+   * @param     {Object}    object
+   *
+   * @return    {Array}
+   */
+  var keys = Amber._util.keys = function(object) {
+    var result = [];
+    var index;
+    if (!isObject(object)) { return object; }
+
+    for (index in object) {
+      if (object.hasOwnProperty(index)) {
+        result.push(index);
+      }
+    }
+    return result;
   };
 
   /*
@@ -341,7 +414,7 @@
      */
     _ensureElement: function() {
       if (!this.$el) {
-        var attrs = _.extend({}, _.result(this, 'attributes'));
+        var attrs = assign({}, _.result(this, 'attributes'));
         if (this.id) {
           attrs.id = _.result(this, 'id');
         }
@@ -399,7 +472,7 @@
   var Vent = function() {
     this.cid = _.uniqueId('vent');
   };
-  _.extend(Vent.prototype, Events);
+  assign(Vent.prototype, Events);
   Amber.Vent = new Vent();
 
   /*
@@ -479,7 +552,7 @@
 
     // Default Options
     this.options = options || {};
-    _.extend(this, options);
+    assign(this, options);
 
     // Make sure an element exists we can manipulate
     this._ensureElement();
@@ -498,7 +571,7 @@
         TODO:
         - Implement setElement and _ensureElement better
     */
-  _.extend(View.prototype, Events, {
+  assign(View.prototype, Events, {
     /**
      * Default element type
      * @type {String}
@@ -601,7 +674,7 @@
     }
 
     // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
+    assign(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
@@ -614,7 +687,7 @@
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
     if (protoProps) {
-      _.extend(child.prototype, protoProps);
+      assign(child.prototype, protoProps);
     }
 
     // Set a convenience property in case the parent's prototype is needed

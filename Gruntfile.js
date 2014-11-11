@@ -85,8 +85,8 @@ module.exports = function (grunt)
                 {
                     singleRun: true,
                     browsers: ['PhantomJS'],
-                    logLevel: 'ERROR',
-                    reporters: ['story', 'coverage']
+                    logLevel: 'ERROR'
+                    // reporters: ['story', 'coverage']
                 }
             },
             watch:
