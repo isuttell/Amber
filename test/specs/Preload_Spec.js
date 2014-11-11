@@ -152,4 +152,30 @@ describe("Amber.Preload", function() {
             done();
         });
     });
+
+    describe("isImageLoaded", function() {
+        it('should return false if image is not complete', function() {
+            var img = {
+                complete: false
+            };
+
+            expect(Amber.Preload.isImageLoaded(img)).toBe(false);
+        });
+
+        it('should return true if image is complete', function() {
+            var img = {
+                complete: true
+            };
+
+            expect(Amber.Preload.isImageLoaded(img)).toBe(true);
+        });
+
+        it('should return false natural width is 0', function() {
+            var img = {
+                complete: true,
+                naturalWidth: 0
+            };
+            expect(Amber.Preload.isImageLoaded(img)).toBe(false);
+        });
+    });
 });

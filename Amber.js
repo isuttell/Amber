@@ -767,31 +767,6 @@
     done = _.isFunction(options.done) ? options.done : false;
 
     /**
-     * Check to see if an image is already loaded
-     * http://stackoverflow.com/a/1977898/2489839
-     * @param  {Object}  img Image Object
-     * @return {Boolean}
-     */
-    var isImageLoaded = function(img) {
-      // During the onload event, IE correctly identifies any images that
-      // weren’t downloaded as not complete. Others should too. Gecko-based
-      // browsers act like NS4 in that they report this incorrectly.
-      if (!img.complete) {
-        return false;
-      }
-
-      // However, they do have two very useful properties: naturalWidth and
-      // naturalHeight. These give the true size of the image. If it failed
-      // to load, either of these should be zero.
-      if (typeof img.naturalWidth !== 'undefined' && img.naturalWidth === 0) {
-        return false;
-      }
-
-      // No other way of checking: assume it’s ok.
-      return true;
-    };
-
-    /**
      * This is called once for each image and triggers the progress or done
      * callbacks accordingly
      */
@@ -816,7 +791,7 @@
         image.src = src;
 
         // Check to see if the image is already loaded otherwise attach events
-        if (!isImageLoaded(image)) {
+        if (!Amber.Preload.isImageLoaded(image)) {
           image.onload = imageAlways;
           image.onerror = imageAlways;
         } else {
@@ -826,6 +801,32 @@
         images.push(image);
       }
     });
+  };
+
+  /**
+   * Check to see if an image is already loaded
+   * http://stackoverflow.com/a/1977898/2489839
+   *
+   * @param  {Object}  img Image Object
+   * @return {Boolean}
+   */
+  Amber.Preload.isImageLoaded = function(img) {
+    // During the onload event, IE correctly identifies any images that
+    // weren’t downloaded as not complete. Others should too. Gecko-based
+    // browsers act like NS4 in that they report this incorrectly.
+    if (!img.complete) {
+      return false;
+    }
+
+    // However, they do have two very useful properties: naturalWidth and
+    // naturalHeight. These give the true size of the image. If it failed
+    // to load, either of these should be zero.
+    if (typeof img.naturalWidth !== 'undefined' && img.naturalWidth === 0) {
+      return false;
+    }
+
+    // No other way of checking: assume it’s ok.
+    return true;
   };
 
   return Amber;
