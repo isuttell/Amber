@@ -2,7 +2,10 @@ describe("Amber.Events", function() {
 	var div = document.createElement('div');
 
 	var TestView = Amber.View.extend({
+			id: 1,
+			className: 'view-container',
 			events: {
+				'click' : 'fakeEvent',
 				'click .test' : 'fakeEvent'
 			},
 			fakeEvent: function(){}

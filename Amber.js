@@ -198,21 +198,43 @@
     */
 
   Amber.Format = {
-    numberWithCommas: function(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    /**
+     * Split a number with commas
+     *
+     * @param     {Number}    num    Number to add commas to
+     *
+     * @return    {String}
+     */
+    numberWithCommas: function(num) {
+      if (!num) { return num; }
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
-    stripTrailingZero: function(x) {
-      return x.toString().replace(/\.0/, '');
+
+    /**
+     * Removes trailing zeros from a float e.g. `1.0` to `1`
+     *
+     * @param     {number}    num    Float number
+     *
+     * @return    {String}
+     */
+    stripTrailingZero: function(num) {
+      if (!num) { return num; }
+      return num.toString().replace(/\.0/, '');
     },
+
+    /**
+     * Takes a word and adds an `s` if count is higher than 1
+     *
+     * @param     {String}    word
+     * @param     {Number}    count
+     *
+     * @return    {String}
+     */
     basicPluralize: function(word, count) {
-      if (isNaN(count) || count < 0) {
-        return void 0;
-      }
-      if (count === 1) {
-        return word;
-      }
-      if (count > 1) {
+      if (count && count > 1) {
         return word + 's';
+      } else {
+        return word;
       }
     }
   };
