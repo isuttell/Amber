@@ -59,6 +59,17 @@
   };
 
   /**
+   * Checks to see if a var is a string
+   *
+   * @param  {String}  str var to check
+   *
+   * @return {Boolean}     [description]
+   */
+  var isFunction = Amber._util.isFunction = function(str) {
+    return {}.toString.call(str) === '[object Function]';
+  };
+
+  /**
    * Checks to see if a var is a function or object
    *
    * @param  {Mixed}  obj  var to check
@@ -68,6 +79,34 @@
   var isIterable = Amber._util.isIterable = function(obj) {
     var result = {}.toString.call(obj);
     return result === '[object Object]' || result === '[object Function]';
+  };
+
+  /**
+   * Runs a function once
+   *
+   * @param  {Function} fn
+   *
+   * @return {Mixed}
+   */
+  var runOnce = Amber._util.runOnce = function(fn) {
+    var ran;
+    var result;
+
+    if (!isFunction(fn)) {
+      throw new Error('fn isn\'t a function');
+    }
+
+    return function() {
+      if (ran) {
+        return result;
+      }
+      ran = true;
+
+      result = fn.apply(this, arguments);
+
+      fn = null;
+      return result;
+    };
   };
 
   /**
@@ -358,7 +397,7 @@
         return this;
       }
       var self = this;
-      var once = _.once(function() {
+      var once = runOnce(function() {
         self.off(name, once);
         callback.apply(this, arguments);
       });

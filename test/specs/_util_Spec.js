@@ -7,8 +7,8 @@ describe("_util", function() {
             var result = {};
 
             var data = {};
-            for(var i in expected) {
-              if(actual.hasOwnProperty(i)) {
+            for (var i in expected) {
+              if (actual.hasOwnProperty(i)) {
                 data[i] = actual[i];
               }
             }
@@ -43,12 +43,52 @@ describe("_util", function() {
       });
     });
 
+    describe('isFunction', function() {
+      it('should check if a variable is a function', function() {
+        for (var test in tests) {
+          expect(Amber._util.isFunction(tests[test])).toBe(test === 'fn');
+        }
+      });
+    });
+
     describe('isString', function() {
       it('should check if a variable is a String', function() {
         for (var test in tests) {
           expect(Amber._util.isString(tests[test])).toBe(test === 'str');
         }
       });
+    });
+
+    describe('isIterable', function() {
+      it('should check if a variable is a String', function() {
+        expect(Amber._util.isIterable(tests.fn)).toBe(true);
+        expect(Amber._util.isIterable(tests.obj)).toBe(true);
+        expect(Amber._util.isIterable(tests.nl)).toBe(false);
+        expect(Amber._util.isIterable(tests.undef)).toBe(false);
+        expect(Amber._util.isIterable(tests.str)).toBe(false);
+        expect(Amber._util.isIterable(tests.arr)).toBe(false);
+      });
+    });
+
+    describe('runOnce', function() {
+      it('should run a function once', function() {
+        var counter = 0;
+        var func = Amber._util.runOnce(function() {
+          counter++;
+        });
+
+        func();
+        func();
+
+        expect(counter).toBe(1);
+      });
+
+      it('should throw an error if it\'s not a function', function(){
+        expect(function(){
+          var func = Amber._util.runOnce({});
+        }).toThrow(new Error('fn isn\'t a function'));
+      });
+
     });
 
     describe('assign/extend', function() {
