@@ -110,6 +110,24 @@
   };
 
   /**
+   * Gets a variable or calls a function depending on what it finds
+   *
+   * @param  {Object} object  Object to look in
+   * @param  {String} name    Object key to get
+   * @param  {Mixed}  context `this` context to Apply
+   * @param  {Mixed}  args    Additional arguments to pass to function context
+   *
+   * @return {Mixed}
+   */
+  var results = Amber._util.results = function(object, name, context) {
+    if (isFunction(object[name])) {
+      var args = Array.prototype.slice.call(arguments).slice(3);
+      return object[name].apply(context || this, args);
+    }
+    return object[name];
+  };
+
+  /**
    * Extends multiple objects
    *
    * @param     {Object}    object     input
@@ -222,7 +240,7 @@
     initialize: function() {
       for (var prop in this.tests) {
         if (this.tests.hasOwnProperty(prop)) {
-          this[prop] = _.result(this.tests, prop);
+          this[prop] = results(this.tests, prop);
         }
       }
       return this;
@@ -423,7 +441,7 @@
         this._events = {};
         return this;
       }
-      names = name ? [name] : _.keys(this._events);
+      names = name ? [name] : keys(this._events);
       for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
         events = this._events[name];
@@ -475,17 +493,17 @@
      */
     _ensureElement: function() {
       if (!this.$el) {
-        var attrs = assign({}, _.result(this, 'attributes'));
+        var attrs = assign({}, results(this, 'attributes'));
         if (this.id) {
-          attrs.id = _.result(this, 'id');
+          attrs.id = results(this, 'id');
         }
         if (this.className) {
-          attrs['class'] = _.result(this, 'className');
+          attrs['class'] = results(this, 'className');
         }
-        var $el = Amber.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
+        var $el = Amber.$('<' + results(this, 'tagName') + '>').attr(attrs);
         this.setElement($el, false);
       } else {
-        this.setElement(_.result(this, '$el'), false);
+        this.setElement(results(this, '$el'), false);
       }
     }
 
@@ -802,8 +820,8 @@
     loaded = 0;
 
     // Check to see if progress and done are actual functions
-    progress = _.isFunction(options.progress) ? options.progress : false;
-    done = _.isFunction(options.done) ? options.done : false;
+    progress = isFunction(options.progress) ? options.progress : false;
+    done = isFunction(options.done) ? options.done : false;
 
     /**
      * This is called once for each image and triggers the progress or done

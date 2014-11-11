@@ -83,8 +83,8 @@ describe("_util", function() {
         expect(counter).toBe(1);
       });
 
-      it('should throw an error if it\'s not a function', function(){
-        expect(function(){
+      it('should throw an error if it\'s not a function', function() {
+        expect(function() {
           var func = Amber._util.runOnce({});
         }).toThrow(new Error('fn isn\'t a function'));
       });
@@ -245,6 +245,54 @@ describe("_util", function() {
         expect(result).toEqual(expected);
       });
 
+    });
+
+    describe('results', function() {
+
+      var testObject, _this, args;
+
+      beforeEach(function() {
+        _this = void 0;
+        args = void 0;
+
+        testObject = {
+          str: 'str',
+          num: 100,
+          fn: function() {
+            args = arguments;
+            _this = this;
+            return 50;
+          }
+        };
+      });
+
+
+      it('should return return a basic value from an object', function() {
+        expect(Amber._util.results(testObject, 'str')).toBe(testObject.str);
+        expect(Amber._util.results(testObject, 'num')).toBe(testObject.num);
+      });
+
+      it('should return `undefined` when a value isn\'t found', function() {
+        expect(typeof Amber._util.results(testObject, 'undef')).toBe('undefined');
+      });
+
+      it('should return the result of a function', function() {
+        expect(Amber._util.results(testObject, 'fn')).toBe(testObject.fn.call());
+      });
+
+      it('should apply `this` context', function() {
+        var testValue = 10;
+        Amber._util.results(testObject, 'fn', {
+          mockThis: testValue
+        });
+        expect(_this.mockThis).toBe(testValue);
+      });
+
+      it('should apply additional args', function() {
+        var testValue = 25;
+        Amber._util.results(testObject, 'fn', {}, testValue);
+        expect(args[0]).toBe(testValue);
+      });
     });
   });
 });
