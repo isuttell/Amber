@@ -840,7 +840,10 @@
     };
 
     // Cycle through each image
-    _.each(urls, function(src) {
+    var srcIndex = -1;
+    var srcLength = urls.length;
+    while (srcIndex++ < srcLength) {
+      var src = urls[srcIndex];
       // Ignore everything that is not a string
       if (isString(src)) {
         // Create an unattached image element
@@ -857,7 +860,7 @@
 
         images.push(image);
       }
-    });
+    }
   };
 
   /**
