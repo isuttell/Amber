@@ -804,24 +804,35 @@
    * @param {Object} options (Optional) done and progress callbacks
    */
   Amber.Preload = function(urls, options) {
-    // Setup
-    var images;
-    var loaded;
-    var progress;
-    var done;
-
-    if (isString(urls)) {
-      urls = [urls];
-    }
-
     options = options || {};
+    /**
+     * Array of images
+     */
+    var images = [];
 
-    images = [];
-    loaded = 0;
+    /**
+     * How many images have we loaded?
+     *
+     * @type    {Number}
+     */
+    var loaded = 0;
 
-    // Check to see if progress and done are actual functions
-    progress = isFunction(options.progress) ? options.progress : false;
-    done = isFunction(options.done) ? options.done : false;
+    /**
+     * On Progress Callback
+     *
+     * @type    {Function}
+     */
+    var progress = options.progress;
+
+    /**
+     * Done Callback
+     *
+     * @type    {Function}
+     */
+    var done = options.done;
+
+    // Either take an array or a string as input
+    if (isString(urls)) { urls = [urls]; }
 
     /**
      * This is called once for each image and triggers the progress or done
@@ -830,12 +841,12 @@
     var imageAlways = function() {
       loaded++;
 
-      if (progress) {
-        progress(loaded / urls.length, loaded, urls.length, images[images.length - 1]);
+      if (isFunction(progress)) {
+        progress.call(this, loaded / urls.length, loaded, urls.length, images[images.length - 1]);
       }
 
-      if (loaded === urls.length && done) {
-        done(images);
+      if (loaded === urls.length && isFunction(done)) {
+        done.call(this, images);
       }
     };
 
