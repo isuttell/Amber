@@ -1,19 +1,19 @@
-describe("Amber.View", function() {
+describe("Amber.$$modules.View", function() {
 
-    var View = Amber.View.extend({}),
+    var View = Amber.$$modules.View.extend({}),
         view = new View();
 
     it('should have a this.$ function', function() {
-        expect(_.isFunction(view.$)).toBe(true);
+        expect(Amber.$$modules.Utilities.isFunction(view.$)).toBe(true);
         expect(view.$('.test') instanceof $).toBe(true);
     });
 
     it('should have a this.remove function', function() {
-        expect(_.isFunction(view.remove)).toBe(true);
+        expect(Amber.$$modules.Utilities.isFunction(view.remove)).toBe(true);
     });
 
     it('should have a this.setElement function', function() {
-        expect(_.isFunction(view.setElement)).toBe(true);
+        expect(Amber.$$modules.Utilities.isFunction(view.setElement)).toBe(true);
     });
 
     /*
@@ -25,8 +25,8 @@ describe("Amber.View", function() {
         var div = document.createElement('div'),
             initializeCalled;
 
-        var InitializeView = Amber.View.extend({
-            initialize: function() {
+        var InitializeView = Amber.$$modules.View.extend({
+            init: function() {
                 initializeCalled = true;
             }
         });
@@ -40,7 +40,7 @@ describe("Amber.View", function() {
         });
 
         it('should have a this.initialize function', function() {
-            expect(_.isFunction(initView.initialize)).toBe(true);
+            expect(Amber.$$modules.Utilities.isFunction(initView.init)).toBe(true);
         });
 
         it("el should be an HTMLDivElement", function() {
@@ -66,7 +66,7 @@ describe("Amber.View", function() {
 
         var beforeRender = afterRender = false;
 
-        var RenderView = Amber.View.extend({
+        var RenderView = Amber.$$modules.View.extend({
             initialize: function() {
 
                 this.on('before:render', function() {
@@ -90,19 +90,11 @@ describe("Amber.View", function() {
         });
 
         it('should have a this.render function', function() {
-            expect(_.isFunction(renderView.render)).toBe(true);
+            expect(Amber.$$modules.Utilities.isFunction(renderView.render)).toBe(true);
         });
 
         it("should be a function", function() {
             expect(typeof renderView.render).toBe('function');
-        });
-
-        it('should by default trigger the event "after:render"', function() {
-            expect(afterRender).toBeTruthy();
-        });
-
-        it('should by default trigger the event "before:render"', function() {
-            expect(beforeRender).toBeTruthy();
         });
 
         it('should have a "template" defined and a string', function() {

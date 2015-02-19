@@ -1,4 +1,4 @@
-describe("_util", function() {
+describe("Utilities", function() {
   beforeEach(function() {
     jasmine.addMatchers({
       toEqualData: function(util, customEqualityTesters) {
@@ -36,9 +36,10 @@ describe("_util", function() {
     };
 
     describe('isObject', function() {
+      console.log(Amber.$$modules);
       it('should check if a variable is a object', function() {
         for (var test in tests) {
-          expect(Amber._util.isObject(tests[test])).toBe(test === 'obj');
+          expect(Amber.$$modules.Utilities.isObject(tests[test])).toBe(test === 'obj');
         }
       });
     });
@@ -46,7 +47,7 @@ describe("_util", function() {
     describe('isFunction', function() {
       it('should check if a variable is a function', function() {
         for (var test in tests) {
-          expect(Amber._util.isFunction(tests[test])).toBe(test === 'fn');
+          expect(Amber.$$modules.Utilities.isFunction(tests[test])).toBe(test === 'fn');
         }
       });
     });
@@ -54,26 +55,26 @@ describe("_util", function() {
     describe('isString', function() {
       it('should check if a variable is a String', function() {
         for (var test in tests) {
-          expect(Amber._util.isString(tests[test])).toBe(test === 'str');
+          expect(Amber.$$modules.Utilities.isString(tests[test])).toBe(test === 'str');
         }
       });
     });
 
     describe('isIterable', function() {
       it('should check if a variable is a String', function() {
-        expect(Amber._util.isIterable(tests.fn)).toBe(true);
-        expect(Amber._util.isIterable(tests.obj)).toBe(true);
-        expect(Amber._util.isIterable(tests.nl)).toBe(false);
-        expect(Amber._util.isIterable(tests.undef)).toBe(false);
-        expect(Amber._util.isIterable(tests.str)).toBe(false);
-        expect(Amber._util.isIterable(tests.arr)).toBe(false);
+        expect(Amber.$$modules.Utilities.isIterable(tests.fn)).toBe(true);
+        expect(Amber.$$modules.Utilities.isIterable(tests.obj)).toBe(true);
+        expect(Amber.$$modules.Utilities.isIterable(tests.nl)).toBe(false);
+        expect(Amber.$$modules.Utilities.isIterable(tests.undef)).toBe(false);
+        expect(Amber.$$modules.Utilities.isIterable(tests.str)).toBe(false);
+        expect(Amber.$$modules.Utilities.isIterable(tests.arr)).toBe(false);
       });
     });
 
     describe('runOnce', function() {
       it('should run a function once', function() {
         var counter = 0;
-        var func = Amber._util.runOnce(function() {
+        var func = Amber.$$modules.Utilities.runOnce(function() {
           counter++;
         });
 
@@ -85,7 +86,7 @@ describe("_util", function() {
 
       it('should throw an error if it\'s not a function', function() {
         expect(function() {
-          var func = Amber._util.runOnce({});
+          var func = Amber.$$modules.Utilities.runOnce({});
         }).toThrow(new Error('fn isn\'t a function'));
       });
 
@@ -105,7 +106,7 @@ describe("_util", function() {
           two: true
         };
 
-        var result = Amber._util.assign(obj1, obj2);
+        var result = Amber.$$modules.Utilities.assign(obj1, obj2);
 
         expect(result).toEqual(expected);
 
@@ -128,7 +129,7 @@ describe("_util", function() {
           three: true
         };
 
-        var result = Amber._util.assign(obj1, obj2, obj3);
+        var result = Amber.$$modules.Utilities.assign(obj1, obj2, obj3);
 
         expect(result).toEqual(expected);
       });
@@ -152,7 +153,7 @@ describe("_util", function() {
           three: true
         };
 
-        var result = Amber._util.assign(obj1, obj2, obj3);
+        var result = Amber.$$modules.Utilities.assign(obj1, obj2, obj3);
 
         expect(result).toEqual(expected);
       });
@@ -169,7 +170,7 @@ describe("_util", function() {
           three: true
         };
 
-        var result = Amber._util.assign(obj1, obj2, obj3);
+        var result = Amber.$$modules.Utilities.assign(obj1, obj2, obj3);
 
         expect(result).toEqual(expected);
       });
@@ -190,7 +191,7 @@ describe("_util", function() {
           two: true
         };
 
-        var result = Amber._util.assign(func, obj);
+        var result = Amber.$$modules.Utilities.assign(func, obj);
 
         expect(result).toEqualData(expected);
       });
@@ -213,7 +214,7 @@ describe("_util", function() {
           two: true
         };
 
-        var result = Amber._util.assign(func, obj);
+        var result = Amber.$$modules.Utilities.assign(func, obj);
 
         expect(result).toEqualData(expected);
       });
@@ -229,7 +230,7 @@ describe("_util", function() {
           two: true
         };
 
-        var result = Amber._util.keys(obj);
+        var result = Amber.$$modules.Utilities.keys(obj);
 
         expect(result).toEqual(expected);
         expect(result instanceof Array).toBe(true);
@@ -240,7 +241,7 @@ describe("_util", function() {
 
         var obj = true;
 
-        var result = Amber._util.keys(obj);
+        var result = Amber.$$modules.Utilities.keys(obj);
 
         expect(result).toEqual(expected);
       });
@@ -268,21 +269,21 @@ describe("_util", function() {
 
 
       it('should return return a basic value from an object', function() {
-        expect(Amber._util.results(testObject, 'str')).toBe(testObject.str);
-        expect(Amber._util.results(testObject, 'num')).toBe(testObject.num);
+        expect(Amber.$$modules.Utilities.results(testObject, 'str')).toBe(testObject.str);
+        expect(Amber.$$modules.Utilities.results(testObject, 'num')).toBe(testObject.num);
       });
 
       it('should return `undefined` when a value isn\'t found', function() {
-        expect(typeof Amber._util.results(testObject, 'undef')).toBe('undefined');
+        expect(typeof Amber.$$modules.Utilities.results(testObject, 'undef')).toBe('undefined');
       });
 
       it('should return the result of a function', function() {
-        expect(Amber._util.results(testObject, 'fn')).toBe(testObject.fn.call());
+        expect(Amber.$$modules.Utilities.results(testObject, 'fn')).toBe(testObject.fn.call());
       });
 
       it('should apply `this` context', function() {
         var testValue = 10;
-        Amber._util.results(testObject, 'fn', {
+        Amber.$$modules.Utilities.results(testObject, 'fn', {
           mockThis: testValue
         });
         expect(_this.mockThis).toBe(testValue);
@@ -290,7 +291,7 @@ describe("_util", function() {
 
       it('should apply additional args', function() {
         var testValue = 25;
-        Amber._util.results(testObject, 'fn', {}, testValue);
+        Amber.$$modules.Utilities.results(testObject, 'fn', {}, testValue);
         expect(args[0]).toBe(testValue);
       });
     });
