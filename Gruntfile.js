@@ -1,117 +1,93 @@
-module.exports = function (grunt)
-{
+/**
+ * Gruntfile
+ *
+ * WARNING:
+ * Unless you know what you're doing, you shouldn't change this file.
+ * Check out the `tasks` directory instead.
+ */
 
-    // Track the time of each task
-    require('time-grunt')(grunt);
+module.exports = function(grunt) {
+  'use strict';
 
-    // Lazy Load
-    require('jit-grunt')(grunt);
+  // Auto load grunt tasks
+  require('jit-grunt')(grunt, {
+    flow: 'grunt-flow-type-check',
+    usebanner: 'grunt-banner'
+  });
 
-    // Project configuration.
-    grunt.initConfig(
-    {
-        pkg: grunt.file.readJSON('package.json'),
-        watch: {
-            Amber: {
-                files: ['Amber.js', 'test/specs/**/*.js'],
-                tasks: ['karma:watch:run', 'jscs', 'lint']
-            },
-            options: {
-                start: true,
-                interrupt: true // Interrupt any running tasks on save
-            }
-        },
-        uglify:
-        {
-            options:
-            {
-                banner: '/*!\n * <%= pkg.name %> v<%= pkg.version %> - <%= pkg.homepage %>\n * <%= pkg.description %>\n * Contributor(s): <%= pkg.author %>\n */\n\n',
-                preserveComments: 'some',
-                report: 'min'
-            },
-            build:
-            {
-                files:
-                {
-                    'Amber.min.js': ['Amber.js'],
-                }
-            }
-        },
-        jshint:
-        {
-            options:
-            {
-                jshintrc: true
-            },
-            Amber: ['Amber.js'],
-            tests: ['test/specs/**/*.js'],
-            grunt: ['Gruntfile.js']
-        },
-        jscs: {
-            options: {
-              config: ".jscsrc"
-            },
-            sol: {
-              files: {
-                src: ["Amber.js"]
-              }
-            }
-        },
-        jasmine:
-        {
-            build:
-            {
-                src: 'Amber.js',
-                options:
-                {
-                    specs: 'test/specs/*Spec.js',
-                    vendor: 'test/vendor/*.js'
-                }
-            }
-        },
-        karma: {
-            options:
-            {
-                configFile: 'test/karma.conf.js',
-                separator: '',
-                preprocessors:
-                {
-                    'Amber.js': 'coverage'
-                },
-            },
-            build:
-            {
-                options:
-                {
-                    singleRun: true,
-                    browsers: ['PhantomJS'],
-                    logLevel: 'ERROR'
-                    // reporters: ['story', 'coverage']
-                }
-            },
-            watch:
-            {
-                options:
-                {
-                    background: true,
-                    browsers: ['PhantomJS'],
-                    logLevel: 'ERROR',
-                    reporters: ['dots',  'coverage']
-                }
-            }
+  /**
+   * Loads Grunt configuration modules from the specified
+   * relative path. These modules should export a function
+   * that, when run, should either load/configure or register
+   * a Grunt task.
+   *
+   * @param   {String}   dir   Directory to load
+   */
+  function loadTasks(dir) {
+    /**
+     * Resolve any relative paths
+     *
+     * @type    {String}
+     */
+    dir = require('path').resolve(dir);
+
+    /**
+     * Interal collection of modules loaded
+     *
+     * @type    {Object}
+     */
+    var modules = {};
+
+    /**
+     * Get a list of items in a directory. This is synchronous since we're
+     * only doing this once on application load
+     *
+     * @type    {Array}
+     */
+    var list = require('fs').readdirSync(dir);
+
+    /**
+     * Setup the Regex to filter out *.js files
+     *
+     * @type    {RegExp}
+     */
+    var jsFile = /.*\.js/;
+
+    // Cycle through each item in the directory
+    list.forEach(function(module) {
+      //Check to see if with have a match and if we split it apartment
+      module = module.match(jsFile);
+      if (module) {
+        // If we find a match try to load and save it. Otherwise log an error
+        try {
+          modules[module[0]] = require(dir + '/' + module[0]);
+        } catch (err) {
+          console.error('Unable to load ' + dir + '/' + module[0], err);
         }
+      }
     });
 
-    /*
-	|--------------------------------------------------------------------------
-	| Tasks
-	|--------------------------------------------------------------------------
-	|
-	*/
+    return modules;
+  }
 
-    grunt.registerTask('lint', ['jshint:Amber']);
-    grunt.registerTask('test', ['lint', 'jscs', 'karma']);
+  /**
+   * Invokes the function from a Grunt configuration module with
+   * a single argument - the `grunt` object.
+   */
+  function invokeConfigFn(tasks) {
+    for (var taskName in tasks) {
+      if (tasks.hasOwnProperty(taskName)) {
+        tasks[taskName](grunt);
+      }
+    }
+  }
 
-    grunt.registerTask('build', ['test', 'uglify']);
-    grunt.registerTask('default', ['karma:watch:start', 'watch']);
+  // Load task functions
+  var taskConfigurations = loadTasks('./tasks/config');
+  var registerDefinitions = loadTasks('./tasks/register');
+
+  // Run task functions to configure Grunt.
+  invokeConfigFn(taskConfigurations);
+  invokeConfigFn(registerDefinitions);
+
 };

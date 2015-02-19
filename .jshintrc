@@ -1,7 +1,7 @@
 {
 	"camelcase" : true,
 	"newcap"    : true,
-	"strict"    : true,
+	"strict"    : false,
 	"trailing"  : true,
 	"browser"   : true,
 	"jquery"    : true,
