@@ -36,7 +36,6 @@ describe("Utilities", function() {
     };
 
     describe('isObject', function() {
-      console.log(Amber.$$modules);
       it('should check if a variable is a object', function() {
         for (var test in tests) {
           expect(Amber.$$modules.Utilities.isObject(tests[test])).toBe(test === 'obj');
