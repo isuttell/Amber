@@ -1,6 +1,6 @@
 Amber View System
 ======
-A modular view system for building interactive javascript websites. Based upon the [Backbone.js](documentcloud.github.com/backbone/). AMD Compatible.
+A modular view system for building interactive javascript websites. Based upon the [Backbone.js](documentcloud.github.com/backbone/). AMD and CommonJS compatible.
 
 [![Build Status](https://img.shields.io/travis/isuttell/Amber/develop.svg?style=flat)](https://travis-ci.org/isuttell/Amber)
 [![Coverage Status](https://img.shields.io/coveralls/isuttell/Amber/develop.svg?style=flat)](https://coveralls.io/r/isuttell/Amber?branch=develop)
@@ -9,9 +9,7 @@ A modular view system for building interactive javascript websites. Based upon t
 
 ## Requirements
 
-* [Lo-Dash](http://lodash.com)
 * [jQuery](http://jquery.com/)
-
 
 ## Development
 
