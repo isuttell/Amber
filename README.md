@@ -2,8 +2,8 @@ Amber View System
 ======
 A modular view system for building interactive javascript websites. Based upon the [Backbone.js](documentcloud.github.com/backbone/). AMD Compatible.
 
-[![Build Status](https://travis-ci.org/isuttell/Amber.svg?branch=master)](https://travis-ci.org/isuttell/Amber)
-[![Coverage Status](https://img.shields.io/coveralls/isuttell/Amber.svg)](https://coveralls.io/r/isuttell/Amber?branch=master)
+[![Build Status](https://img.shields.io/travis/isuttell/Amber/develop.svg?style=flat)](https://travis-ci.org/isuttell/Amber)
+[![Coverage Status](https://img.shields.io/coveralls/isuttell/Amber/develop.svg?style=flat)](https://coveralls.io/r/isuttell/Amber?branch=master)
 [![Codacy Badge](https://www.codacy.com/project/badge/a2eee285084c41a1aac829d580cb0044)](https://www.codacy.com/public/isuttell/Amber)
 [![GitHub version](https://badge.fury.io/gh/isuttell%2FAmber.svg)](http://badge.fury.io/gh/isuttell%2FAmber)
 
