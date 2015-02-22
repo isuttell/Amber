@@ -5,6 +5,19 @@
    */
 
   Amber.define('Utilities', function(){
+
+    /**
+     * Checks to see if an object is a specific type
+     *
+     * @param     {Mixed}     obj
+     * @param     {String}    type
+     *
+     * @return    {Boolean}
+     */
+    var isType = function(obj, type) {
+      return {}.toString.call(obj) === '[object ' + type + ']';
+    };
+
     /**
      * Checks to see if a var is an object
      *
@@ -13,7 +26,7 @@
      * @return {Boolean}
      */
     var isObject = function(obj) {
-      return {}.toString.call(obj) === '[object Object]';
+      return isType(obj, 'Object');
     };
 
     /**
@@ -24,7 +37,7 @@
      * @return {Boolean}     [description]
      */
     var isString = function(str) {
-      return {}.toString.call(str) === '[object String]';
+      return isType(str, 'String');
     };
 
     /**
@@ -34,8 +47,8 @@
      *
      * @return {Boolean}     [description]
      */
-    var isFunction = function(str) {
-      return {}.toString.call(str) === '[object Function]';
+    var isFunction = function(fn) {
+      return isType(fn, 'Function');
     };
 
     /**
@@ -46,8 +59,7 @@
      * @return {Boolean}
      */
     var isIterable = function(obj) {
-      var result = {}.toString.call(obj);
-      return result === '[object Object]' || result === '[object Function]';
+      return isType(obj, 'Object') || isType(obj, 'Function');
     };
 
     /**
