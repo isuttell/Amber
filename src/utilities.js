@@ -69,7 +69,7 @@
      *
      * @return {Mixed}
      */
-    var runOnce = function(fn) {
+    var runOnce = function(fn, ctx) {
       var ran;
       var result;
 
@@ -83,7 +83,7 @@
         }
         ran = true;
 
-        result = fn.apply(this, arguments);
+        result = fn.apply(ctx || this, arguments);
 
         fn = null;
         return result;
