@@ -1,3 +1,9 @@
+  /*****************************************************************************
+   * Define
+   *
+   * @file    Module definition functions
+   */
+
   Amber.define = function(name, deps, fn, extend) {
     // Optional args
     if({}.toString.call(deps) === '[object Function]'){
