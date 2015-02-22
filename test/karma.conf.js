@@ -7,13 +7,13 @@ module.exports = function(config)
 
         files: [
             'test/vendor/**/*.js',
-            'Amber.src.js',
+            'Amber.js',
             'test/helpers/run.js',
             'test/specs/**/*.js'
         ],
 
         preprocessors: {
-          'Amber.src.js': ['coverage'],
+          'Amber.js': ['coverage'],
         },
 
         autoWatch: false,

@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         'src/run.js',
         'src/inc/_footer.js',
       ],
-      dest: 'Amber.src.js'
+      dest: 'Amber.js'
     }
   });
 

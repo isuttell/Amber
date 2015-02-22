@@ -9,10 +9,10 @@
  *    https://github.com/gruntjs/grunt-contrib-uglify
  */
 module.exports = function(grunt) {
-
+  var pkg = grunt.file.readJSON('package.json');
   grunt.config.set('uglify', {
     options: {
-      banner: '/*!\n * <%= pkg.name %> v<%= pkg.version %> - <%= pkg.homepage %>\n * <%= pkg.description %>\n * Contributor(s): <%= pkg.author %>\n */\n\n',
+      banner: '/*!\n * ' + pkg.name+ '> v' + pkg.version+ '> - ' + pkg.homepage + '\n * ' + pkg.description + '\n * Contributor(s): ' + pkg.author + '\n */\n\n',
       preserveComments: 'some',
       report: 'min'
     },
