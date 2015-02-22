@@ -93,19 +93,22 @@
     /**
      * Gets a variable or calls a function depending on what it finds
      *
-     * @param  {Object} object  Object to look in
-     * @param  {String} name    Object key to get
-     * @param  {Mixed}  context `this` context to Apply
-     * @param  {Mixed}  args    Additional arguments to pass to function context
+     * @param  {Object}    obj     Object to look in
+     * @param  {String}    name    Object key to get
+     * @param  {Mixed}     context `this` context to Apply
+     * @param  {Mixed...}  args    Additional arguments to pass to function context
      *
      * @return {Mixed}
      */
-    var results = function(object, name, context) {
-      if (isFunction(object[name])) {
+    var results = function(obj, name, context) {
+      if (isFunction(obj[name])) {
         var args = Array.prototype.slice.call(arguments).slice(3);
-        return object[name].apply(context || this, args);
+        return obj[name].apply(context || this, args);
+      } else if (isObject(obj)) {
+        return obj[name];
+      } else {
+        return obj;
       }
-      return object[name];
     };
 
     /**

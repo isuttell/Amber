@@ -276,6 +276,10 @@ describe("Utilities", function() {
         expect(typeof Amber.$$modules.Utilities.results(testObject, 'undef')).toBe('undefined');
       });
 
+      it('should return the value of the first argument if it is not an object', function() {
+        expect(Amber.$$modules.Utilities.results('str')).toBe('str');
+      });
+
       it('should return the result of a function', function() {
         expect(Amber.$$modules.Utilities.results(testObject, 'fn')).toBe(testObject.fn.call());
       });
