@@ -37,7 +37,7 @@ module.exports = function(config)
         {
             dir: 'test/coverage/',
             reporters: [
-                { type: 'html', subdir: 'html' },
+                { type: 'html'},
                 { type: 'lcovonly', subdir: 'lcov'},
                 { type: 'text-summary' },
             ]
