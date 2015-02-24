@@ -14,9 +14,6 @@
 module.exports = function(grunt) {
 
   grunt.config.set('watch', {
-    options: {
-      interrupt: true, // Interrupt any running tasks on save
-    },
 
     grunt: {
       // Grunt Files
@@ -42,7 +39,7 @@ module.exports = function(grunt) {
 
       files: ['src/**/*.js', 'test/specs/**/*.js'],
 
-      tasks: ['concat:dev', 'karma:watch:run', 'jshint']
+      tasks: ['webpack', 'karma:watch:run', 'jshint']
     }
 
   });

@@ -1,54 +1,66 @@
-module.exports = function(config)
-{
-    config.set(
-    {
+module.exports = function(config) {
+  config.set({
 
-        basePath: '../',
+    basePath: '../',
 
-        files: [
-            'test/vendor/**/*.js',
-            'Amber.js',
-            'test/helpers/run.js',
-            'test/specs/**/*.js'
-        ],
+    files: [
+      'test/vendor/**/*.js',
+      'test/specs/**/*.js'
+    ],
 
-        preprocessors: {
-          'Amber.js': ['coverage'],
-        },
+    preprocessors: {
+      'test/specs/**/*.js': ['webpack']
+    },
 
-        autoWatch: false,
+    webpack: {
+      externals: {
+        'jquery': "jQuery"
+      },
+      module: {
+        postLoaders: [{
+          test: /\.js$/,
+          exclude: /(test|node_modules|bower_components)\//,
+          loader: 'istanbul-instrumenter'
+        }]
+      },
+    },
 
-        frameworks: ['jasmine'],
+    autoWatch: false,
 
-        browsers: ['PhantomJS'],
+    frameworks: ['jasmine'],
 
-        plugins: [
-            'karma-chrome-launcher',
-            'karma-firefox-launcher',
-            'karma-safari-launcher',
-            'karma-phantomjs-launcher',
-            'karma-jasmine',
-            'karma-coverage',
-            'karma-story-reporter',
-            'karma-html-reporter'
-        ],
+    browsers: ['PhantomJS'],
 
-        coverageReporter:
-        {
-            dir: 'test/coverage/',
-            reporters: [
-                { type: 'html'},
-                { type: 'lcovonly', subdir: 'lcov'},
-                { type: 'text-summary' },
-            ]
-        },
+    plugins: [
+      'karma-chrome-launcher',
+      'karma-firefox-launcher',
+      'karma-safari-launcher',
+      'karma-phantomjs-launcher',
+      'karma-jasmine',
+      'karma-coverage',
+      'karma-story-reporter',
+      'karma-html-reporter',
+      'karma-webpack'
+    ],
 
-        htmlReporter: {
-            outputDir: 'test/reports/',
-            templatePath: __dirname + '/reportTemplate.html'
-        },
+    coverageReporter: {
+      dir: 'test/coverage/',
+      reporters: [{
+        type: 'html'
+      }, {
+        type: 'lcovonly',
+        subdir: 'lcov'
+      }, {
+        type: 'text-summary'
+      }, ]
+    },
 
-        reporters: ['story', 'coverage']
+    htmlReporter: {
+      outputDir: 'test/reports/',
+      templatePath: __dirname + '/reportTemplate.html'
+    },
 
-    });
+    reporters: ['story', 'coverage']
+
+  });
 };

@@ -45,25 +45,28 @@
 <div id="images"></div>
 <script src="../test/vendor/lodash.js" type="application/javascript"></script>
 <script src="../test/vendor/jquery.js" type="application/javascript"></script>
-<script src="../Amber.src.js" type="application/javascript"></script>
+<script src="../Amber.js" type="application/javascript"></script>
 <script type="application/javascript">
-    Amber.View('AppView', function(){
-      return {
-        init: function(){
+    (function(Amber){
 
+      Amber.View('AppView', function(){
+        return {
+          init: function(){
+
+          }
         }
-      }
-    });
+      });
 
-    Amber.run(['AppView'], function(AppView){
-      var view = new AppView({
-        $el: Amber.$('#progress')
+      Amber.run(['AppView'], function(AppView){
+        var view = new AppView({
+          $el: Amber.$('#progress')
+        });
+        var view2 = new AppView({
+          $el: Amber.$('#bar')
+        });
       });
-      var view2 = new AppView({
-        $el: Amber.$('#bar')
-      });
-      debugger;
-    });
+
+    })(window.Amber);
 
 </script>
 </body>

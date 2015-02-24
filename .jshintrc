@@ -10,9 +10,7 @@
 	"quotmark"  : false,
 	"maxcomplexity": 10,
 	"globals"   : {
-		"Amber"     : false,
-		"Format"     : false,
-		"Modernizr" : false,
-		"define": false
+    "module" : true,
+		"require" : false
 	}
 }
