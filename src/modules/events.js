@@ -51,43 +51,63 @@ module.exports = {
     return this.on(name, once, context);
   },
 
-  //Turn off an event on this object
-  off: function(name, callback, context) {
+  /**
+   * Turn off an event
+   *
+   * @param     {String}      name
+   * @param     {Function}    callback
+   */
+  off: function(name, callback) {
     var retain;
     var ev;
     var events;
     var names;
-    var i;
-    var l;
-    var j;
-    var k;
 
+    // No events
     if (!this._events) {
       return this;
     }
-    if (!name && !callback && !context) {
+
+    // Turn it all off
+    if (!name && !callback) {
       this._events = {};
       return this;
     }
+
+    // Event names either the event or all of the events
     names = name ? [name] : _.keys(this._events);
-    for (i = 0, l = names.length; i < l; i++) {
+
+    // Loop through event names
+    for (var i = 0, l = names.length; i < l; i++) {
       name = names[i];
       events = this._events[name];
-      if (events) {
-        this._events[name] = retain = [];
-        if (callback || context) {
-          for (j = 0, k = events.length; j < k; j++) {
-            ev = events[j];
-            if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-              (context && context !== ev.context)) {
-              retain.push(ev);
-            }
+
+      if (!events) {
+        // Skip if we have no events
+        continue;
+      }
+
+      // Empty and refill below
+      this._events[name] = retain = [];
+
+      // If we have a callback search for it
+      if (callback) {
+        // Loop through individual callbacks per event
+        for (var j = 0, k = events.length; j < k; j++) {
+          ev = events[j];
+          if (callback !== ev.callback && callback !== ev.callback._callback) {
+            retain.push(ev);
           }
-        }
-        if (!retain.length) {
-          delete this._events[name];
+          ev = void 0;
         }
       }
+
+      // No events? Delete
+      if (!retain.length) {
+        delete this._events[name];
+      }
+
+      retain = void 0;
     }
 
     return this;
@@ -95,8 +115,9 @@ module.exports = {
 
   /**
    * Trigger an event
-   * @param  {string} name
-   * @return {this}   return this so we can chain
+   * @param  {string}   name
+   * @params {Mixex...}
+   * @return {this}     return this so we can chain
    */
   trigger: function(name) {
     if (!this._events) {

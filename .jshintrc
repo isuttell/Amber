@@ -9,7 +9,7 @@
 	"undef"     : true,
 	"unused"    : true,
 	"quotmark"  : true,
-	"maxcomplexity": 6,
+  "maxcomplexity": 10,
 	"globals"   : {
     "module" : true,
 		"require" : false
