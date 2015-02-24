@@ -1,3 +1,8 @@
+/*!
+ * amber v0.6.0 - <https://github.com/isuttell/Amber>
+ * Yet another javascript framework
+ * Contributor(s): Isaac Suttell <isaac@isaacsuttell.com>
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("jQuery"));
@@ -7,7 +12,7 @@
 		exports["Amber"] = factory(require("jQuery"));
 	else
 		root["Amber"] = factory(root["jQuery"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -74,16 +79,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Require Depedency Injection System
 	 */
-	Amber.define = __webpack_require__(2)(Amber);
-	Amber.inject = __webpack_require__(3)(Amber);
-	Amber.module = __webpack_require__(4)(Amber);
-	Amber.run = __webpack_require__(5)(Amber);
-	Amber.$ = __webpack_require__(1);
+	Amber.define = __webpack_require__(4)(Amber);
+	Amber.inject = __webpack_require__(6)(Amber);
+	Amber.module = __webpack_require__(2)(Amber);
+	Amber.run = __webpack_require__(7)(Amber);
+	Amber.$ = __webpack_require__(3);
 
 	/**
 	 * Define aliases
 	 */
-	Amber.View = __webpack_require__(6)(Amber);
+	Amber.View = __webpack_require__(8)(Amber);
 
 	/**
 	 * Built in modules. These are available as dependencies to any definition
@@ -91,12 +96,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @type    {Object}
 	 */
 	Amber.$$modules = {
-	  'jQuery' : __webpack_require__(1),
-	  '$browser': __webpack_require__(7),
-	  '$utilities' : __webpack_require__(8),
-	  '$supports' : __webpack_require__(9),
-	  '$view' : __webpack_require__(10),
-	  '$window' : __webpack_require__(11)
+	  'jQuery' : __webpack_require__(3),
+	  '$browser': __webpack_require__(9),
+	  '$utilities' : __webpack_require__(1),
+	  '$supports' : __webpack_require__(10),
+	  '$view' : __webpack_require__(11),
+	  '$window' : __webpack_require__(12)
 	};
 
 	module.exports = Amber;
@@ -104,353 +109,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Define
-	 *
-	 * @file    Module definition functions
-	 */
-
-	'use strict';
-
-	var _ = __webpack_require__(8);
-
-	module.exports = function(Amber) {
-
-	  return function define(name, deps, fn, extend) {
-	    // Optional args
-	    if(_.isFunction(deps)){
-	      fn = deps;
-	      deps = [];
-	    }
-
-	    // Make sure it exists
-	    Amber._modules = Amber._modules || [];
-
-	    // Save
-	    Amber._modules.push({
-	      extend: extend,
-	      name: name,
-	      deps: deps,
-	      fn: fn
-	    });
-	  };
-
-	};
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Inject
-	 *
-	 * @file    Once `run` has been executed you can inject additional deps
-	 */
-
-	'use strict';
-
-	module.exports = function(Amber) {
-
-	  var getModule = __webpack_require__(4)(Amber);
-
-	  /**
-	   * Applys deps to fn
-	   *
-	   * @param     {Array}      deps    An array of module names
-	   * @param     {Function}    fn     callback
-	   */
-	  return function inject(deps, fn) {
-	    var i = deps.length;
-	    while (--i >= 0) {
-	      deps[i] = getModule(deps[i]);
-	    }
-	    fn.apply(Amber, deps);
-	  };
-
-	};
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Get a Module
-	 */
-
-	'use strict';
-
-	module.exports = function(Amber) {
-
-	  /**
-	   * Module getter
-	   *
-	   * @param     {String}    name
-	   * @return    {Mixed}
-	   */
-	  return function module(name) {
-	    return Amber.$$modules[name];
-	  };
-	};
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Run
-	 *
-	 * @file    Starts the application
-	 */
-
-	'use strict';
-
-	var _ = __webpack_require__(8);
-
-	/**
-	 * Gets a list of all the modules names that have already been found. If an
-	 * module requires something that can't be found in this list then we can't
-	 * resolve it.
-	 *
-	 * @param     {Array}     definitions    Modules to be applied
-	 * @param     {Object}    modules        Modules already applied
-	 *
-	 * @return    {Array}
-	 */
-	var getModuleNames = function(definitions, modules) {
-
-	  var names = [];
-	  var i = definitions.length;
-	  while (--i >= 0) {
-	    names.push(definitions[i].name);
-	  }
-	  // And add any existing module names
-	  names = names.concat(_.keys(modules));
-
-	  return names;
-	};
-
-	/**
-	 * The module factory is initialized with a list of names and modules. Then
-	 * the create method takes a module definition and looks to see if the
-	 * definitions dependencies are ready yet. If they are we pass the completed
-	 * definition or falsey
-	 *
-	 * @private
-	 * @param    {Array}     names      Used to check to see if a module exists at all
-	 * @param    {Object}    modules    Completed modules
-	 */
-	var ModuleFactory = function(names, modules) {
-
-	  /**
-	   * Loop through each definition's arguments to check to see if they have
-	   * already been applied or not. If not then we add it back into the loop
-	   * and try again later
-	   *
-	   * @param     {Object}    definition    Object pulled from `Amber.define`
-	   *
-	   * @return    {Object|Boolean}          Either completed definition or falsey
-	   */
-	  this.create = function(definition) {
-	    var add = true;
-
-	    var d = definition.deps ? definition.deps.length : 0;
-	    while (--d >= 0) {
-	      if (names.indexOf(definition.deps[d]) === -1) {
-	        throw new Error('Unable to find module: ' + definition.deps[d]);
-	      } else if (false === _.isUndefined(modules[definition.deps[d]])) {
-	        definition.deps[d] = modules[definition.deps[d]];
-	      } else if (false === _.isUndefined(window[definition.deps[d]])) {
-	        definition.deps[d] = window[definition.deps[d]];
-	      } else {
-	        add = false;
-	      }
-	    }
-
-	    if (add) {
-	      return definition;
-	    } else {
-	      return false;
-	    }
-	  };
-
-	  /**
-	   * Takes a created definition and tries to apply it
-	   *
-	   * @param     {Object}    definition    Object from `Amber.define` with deps
-	   *
-	   * @return    {Mixed|false}
-	   */
-	  this.apply = function(ctx, definition) {
-	      // Check to see if the extend function is there
-	      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
-	        definition = false;
-	      }
-
-	      if (false !== definition && _.isString(definition.extend)) {
-	        // If the module is uses the `extend` module and defines then we apply it here
-	        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
-	        return true;
-	      } else if (false !== definition) {
-	        // If all of the modules dependencies are found then we apply it
-	        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
-	        return true;
-	      } else {
-	        return false;
-	      }
-	  };
-	};
-
-	module.exports = function(Amber) {
-
-	  /**
-	   * Loads any unloaded modules into the framework and acts as a starting point
-	   * for the application
-	   *
-	   * @public
-	   * @param     {Array}       deps        The names of any dependencies for the callback
-	   * @param     {Function}    callback    Optional callback
-	   */
-	  return function run(deps, callback) {
-	    // Optional callback
-	    if (_.isFunction(deps)) {
-	      callback = deps;
-	      deps = [];
-	    }
-
-	    // Save a copy of any new definitions and remove them from the queue
-	    var definitions = Amber._modules || [];
-	    delete Amber._modules;
-
-	    // Ensure the module directory exists
-	    var modules = Amber.$$modules;
-
-	    // Save a list of all defined modules so we can check to see if new modules
-	    // are requiring modules we can actually find
-	    var names = getModuleNames(definitions, modules);
-
-	    // Put a check in here so we don't loop forever trying to find something
-	    // that does not exist
-	    var maxIterations = names.length * names.length;
-
-	    // Start the factory which setups up each definition so we can apply it
-	    var factory = new ModuleFactory(names, modules);
-
-	    // Loop through each new definition
-	    var i = -1;
-	    while (++i < definitions.length) {
-	      // Check to see if the definition is ready to be applied
-	      var definition = factory.create(definitions[i]);
-
-	      // Try to apply deps
-	      definition = factory.apply(Amber, definition);
-
-	      if(false === definition) {
-	        // Otherwise we send it back to check later
-	        definitions.push(definitions[i]);
-	      }
-
-	      // Set it to undefined so we don't store multiple copyies in memory
-	      definitions[i] = void 0;
-
-	      // Ensure we don't hit an infinite loop if we can't resolve things
-	      if (i >= maxIterations) {
-	        throw new Error('Unable to resolve dependencies');
-	      }
-	    }
-
-	    // optional Callback
-	    if (_.isFunction(callback)) {
-	      Amber.inject(deps, callback);
-	    }
-	  };
-
-	};
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * View
-	 *
-	 * @alias
-	 * @file    Alias to define a module that extends a View
-	 */
-	'use strict';
-
-	var _ = __webpack_require__(8);
-
-	module.exports = function(Amber) {
-
-	  return function View(name, deps, fn) {
-	    // Optional args
-	    if(_.isFunction(deps)){
-	      fn = deps;
-	      deps = [];
-	    }
-
-	    Amber.define(name, deps, fn, '$view');
-	  };
-
-	};
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Browser
-	 *
-	 * @file    User Agent detection
-	 */
-
-	'use strict';
-
-	module.exports = (function() {
-
-	  var Browser = {};
-	  Browser.$$check = function(userAgent) {
-
-	    this.iOS = !!userAgent.match(/iPad|iPhone|iPod/i);
-	    this.iPhone = !!userAgent.match(/iPhone/i);
-	    this.iPad = !!userAgent.match(/iPad/i);
-	    this.android = !!userAgent.match(/Android/i);
-	    this.blackberry = !!userAgent.match(/BlackBerry/i);
-	    this.iemobile = !!userAgent.match(/IEMobile/i);
-	    this.firefox = !!userAgent.match(/Firefox/i);
-	    this.chrome = !!userAgent.match(/Chrome/i);
-	    this.safari = !!userAgent.match(/(Version\/\d\.\d.*Safari)/i);
-	    this.ie = userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/i) || false;
-
-	    this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
-
-	    // Get the version number so we can use the <> operators
-	    if (this.ie) {
-	      this.ie = Math.floor(this.ie[1]);
-	    }
-
-	    return this;
-	  };
-
-	  return Browser.$$check(navigator.userAgent);
-	})();
-
-
-/***/ },
-/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -742,7 +400,400 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Get a Module
+	 */
+
+	'use strict';
+
+	module.exports = function(Amber) {
+
+	  /**
+	   * Module getter
+	   *
+	   * @param     {String}    name
+	   * @return    {Mixed}
+	   */
+	  return function module(name) {
+	    return Amber.$$modules[name];
+	  };
+	};
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Define
+	 *
+	 * @file    Module definition functions
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	module.exports = function(Amber) {
+
+	  return function define(name, deps, fn, extend) {
+	    // Optional args
+	    if(_.isFunction(deps)){
+	      fn = deps;
+	      deps = [];
+	    }
+
+	    // Make sure it exists
+	    Amber._modules = Amber._modules || [];
+
+	    // Save
+	    Amber._modules.push({
+	      extend: extend,
+	      name: name,
+	      deps: deps,
+	      fn: fn
+	    });
+	  };
+
+	};
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Extend
+	 *
+	 * @file    Allows a function to be extended such as View
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	var extend = function(protoProps, staticProps) {
+
+	  var parent = this;
+	  var child = function() {
+	    return parent.apply(this, arguments);
+	  };
+
+	  // Add static properties to the constructor function, if supplied.
+	  _.assign(child, parent, staticProps);
+
+	  // Set the prototype chain to inherit from `parent`, without calling
+	  // `parent`'s constructor function.
+	  var Surrogate = function() {
+	    this.constructor = child;
+	  };
+	  Surrogate.prototype = parent.prototype;
+	  child.prototype = new Surrogate();
+
+	  // Add prototype properties (instance properties) to the subclass,
+	  // if supplied.
+	  if (protoProps) {
+	    _.assign(child.prototype, protoProps);
+	  }
+
+	  child.extend = extend;
+
+	  return child;
+	};
+
+	module.exports = extend;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Inject
+	 *
+	 * @file    Once `run` has been executed you can inject additional deps
+	 */
+
+	'use strict';
+
+	module.exports = function(Amber) {
+
+	  var getModule = __webpack_require__(2)(Amber);
+
+	  /**
+	   * Applys deps to fn
+	   *
+	   * @param     {Array}      deps    An array of module names
+	   * @param     {Function}    fn     callback
+	   */
+	  return function inject(deps, fn) {
+	    var i = deps.length;
+	    while (--i >= 0) {
+	      deps[i] = getModule(deps[i]);
+	    }
+	    fn.apply(Amber, deps);
+	  };
+
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Run
+	 *
+	 * @file    Starts the application
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	/**
+	 * Gets a list of all the modules names that have already been found. If an
+	 * module requires something that can't be found in this list then we can't
+	 * resolve it.
+	 *
+	 * @param     {Array}     definitions    Modules to be applied
+	 * @param     {Object}    modules        Modules already applied
+	 *
+	 * @return    {Array}
+	 */
+	var getModuleNames = function(definitions, modules) {
+
+	  var names = [];
+	  var i = definitions.length;
+	  while (--i >= 0) {
+	    names.push(definitions[i].name);
+	  }
+	  // And add any existing module names
+	  names = names.concat(_.keys(modules));
+
+	  return names;
+	};
+
+	/**
+	 * The module factory is initialized with a list of names and modules. Then
+	 * the create method takes a module definition and looks to see if the
+	 * definitions dependencies are ready yet. If they are we pass the completed
+	 * definition or falsey
+	 *
+	 * @private
+	 * @param    {Array}     names      Used to check to see if a module exists at all
+	 * @param    {Object}    modules    Completed modules
+	 */
+	var ModuleFactory = function(names, modules) {
+
+	  /**
+	   * Loop through each definition's arguments to check to see if they have
+	   * already been applied or not. If not then we add it back into the loop
+	   * and try again later
+	   *
+	   * @param     {Object}    definition    Object pulled from `Amber.define`
+	   *
+	   * @return    {Object|Boolean}          Either completed definition or falsey
+	   */
+	  this.create = function(definition) {
+	    var add = true;
+
+	    var d = definition.deps ? definition.deps.length : 0;
+	    while (--d >= 0) {
+	      if (names.indexOf(definition.deps[d]) === -1) {
+	        throw new Error('Unable to find module: ' + definition.deps[d]);
+	      } else if (false === _.isUndefined(modules[definition.deps[d]])) {
+	        definition.deps[d] = modules[definition.deps[d]];
+	      } else if (false === _.isUndefined(window[definition.deps[d]])) {
+	        definition.deps[d] = window[definition.deps[d]];
+	      } else {
+	        add = false;
+	      }
+	    }
+
+	    if (add) {
+	      return definition;
+	    } else {
+	      return false;
+	    }
+	  };
+
+	  /**
+	   * Takes a created definition and tries to apply it
+	   *
+	   * @param     {Object}    definition    Object from `Amber.define` with deps
+	   *
+	   * @return    {Mixed|false}
+	   */
+	  this.apply = function(ctx, definition) {
+	      // Check to see if the extend function is there
+	      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+	        definition = false;
+	      }
+
+	      if (false !== definition && _.isString(definition.extend)) {
+	        // If the module is uses the `extend` module and defines then we apply it here
+	        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
+	        return true;
+	      } else if (false !== definition) {
+	        // If all of the modules dependencies are found then we apply it
+	        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
+	        return true;
+	      } else {
+	        return false;
+	      }
+	  };
+	};
+
+	module.exports = function(Amber) {
+
+	  /**
+	   * Loads any unloaded modules into the framework and acts as a starting point
+	   * for the application
+	   *
+	   * @public
+	   * @param     {Array}       deps        The names of any dependencies for the callback
+	   * @param     {Function}    callback    Optional callback
+	   */
+	  return function run(deps, callback) {
+	    // Optional callback
+	    if (_.isFunction(deps)) {
+	      callback = deps;
+	      deps = [];
+	    }
+
+	    // Save a copy of any new definitions and remove them from the queue
+	    var definitions = Amber._modules || [];
+	    delete Amber._modules;
+
+	    // Ensure the module directory exists
+	    var modules = Amber.$$modules;
+
+	    // Save a list of all defined modules so we can check to see if new modules
+	    // are requiring modules we can actually find
+	    var names = getModuleNames(definitions, modules);
+
+	    // Put a check in here so we don't loop forever trying to find something
+	    // that does not exist
+	    var maxIterations = names.length * names.length;
+
+	    // Start the factory which setups up each definition so we can apply it
+	    var factory = new ModuleFactory(names, modules);
+
+	    // Loop through each new definition
+	    var i = -1;
+	    while (++i < definitions.length) {
+	      // Check to see if the definition is ready to be applied
+	      var definition = factory.create(definitions[i]);
+
+	      // Try to apply deps
+	      definition = factory.apply(Amber, definition);
+
+	      if(false === definition) {
+	        // Otherwise we send it back to check later
+	        definitions.push(definitions[i]);
+	      }
+
+	      // Set it to undefined so we don't store multiple copyies in memory
+	      definitions[i] = void 0;
+
+	      // Ensure we don't hit an infinite loop if we can't resolve things
+	      if (i >= maxIterations) {
+	        throw new Error('Unable to resolve dependencies');
+	      }
+	    }
+
+	    // optional Callback
+	    if (_.isFunction(callback)) {
+	      Amber.inject(deps, callback);
+	    }
+	  };
+
+	};
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * View
+	 *
+	 * @alias
+	 * @file    Alias to define a module that extends a View
+	 */
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	module.exports = function(Amber) {
+
+	  return function View(name, deps, fn) {
+	    // Optional args
+	    if(_.isFunction(deps)){
+	      fn = deps;
+	      deps = [];
+	    }
+
+	    Amber.define(name, deps, fn, '$view');
+	  };
+
+	};
+
+
+/***/ },
 /* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Browser
+	 *
+	 * @file    User Agent detection
+	 */
+
+	'use strict';
+
+	module.exports = (function() {
+
+	  var Browser = {};
+	  Browser.$$check = function(userAgent) {
+
+	    this.iOS = !!userAgent.match(/iPad|iPhone|iPod/i);
+	    this.iPhone = !!userAgent.match(/iPhone/i);
+	    this.iPad = !!userAgent.match(/iPad/i);
+	    this.android = !!userAgent.match(/Android/i);
+	    this.blackberry = !!userAgent.match(/BlackBerry/i);
+	    this.iemobile = !!userAgent.match(/IEMobile/i);
+	    this.firefox = !!userAgent.match(/Firefox/i);
+	    this.chrome = !!userAgent.match(/Chrome/i);
+	    this.safari = !!userAgent.match(/(Version\/\d\.\d.*Safari)/i);
+	    this.ie = userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/i) || false;
+
+	    this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
+
+	    // Get the version number so we can use the <> operators
+	    if (this.ie) {
+	      this.ie = Math.floor(this.ie[1]);
+	    }
+
+	    return this;
+	  };
+
+	  return Browser.$$check(navigator.userAgent);
+	})();
+
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -753,7 +804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(8);
+	var _ = __webpack_require__(1);
 
 	/**
 	 * Feature Tests
@@ -821,7 +872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -832,7 +883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(8);
+	var _ = __webpack_require__(1);
 
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -997,13 +1048,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	View.extend = __webpack_require__(12);
+	View.extend = __webpack_require__(5);
 
 	module.exports = View;
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -1015,52 +1066,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	module.exports = window;
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * Extend
-	 *
-	 * @file    Allows a function to be extended such as View
-	 */
-
-	'use strict';
-
-	var _ = __webpack_require__(8);
-
-	var extend = function(protoProps, staticProps) {
-
-	  var parent = this;
-	  var child = function() {
-	    return parent.apply(this, arguments);
-	  };
-
-	  // Add static properties to the constructor function, if supplied.
-	  _.assign(child, parent, staticProps);
-
-	  // Set the prototype chain to inherit from `parent`, without calling
-	  // `parent`'s constructor function.
-	  var Surrogate = function() {
-	    this.constructor = child;
-	  };
-	  Surrogate.prototype = parent.prototype;
-	  child.prototype = new Surrogate();
-
-	  // Add prototype properties (instance properties) to the subclass,
-	  // if supplied.
-	  if (protoProps) {
-	    _.assign(child.prototype, protoProps);
-	  }
-
-	  child.extend = extend;
-
-	  return child;
-	};
-
-	module.exports = extend;
 
 
 /***/ }
