@@ -4,6 +4,8 @@
  * @file    Once `run` has been executed you can inject additional deps
  */
 
+'use strict';
+
 module.exports = function(Amber) {
 
   var getModule = require('./module')(Amber);
@@ -22,4 +24,4 @@ module.exports = function(Amber) {
     fn.apply(Amber, deps);
   };
 
-}
+};

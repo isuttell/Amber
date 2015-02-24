@@ -4,7 +4,12 @@
  * @file    Allows a function to be extended such as View
  */
 
+'use strict';
+
+var _ = require('../modules/utilities');
+
 var extend = function(protoProps, staticProps) {
+
   var parent = this;
   var child = function() {
     return parent.apply(this, arguments);

@@ -3,6 +3,9 @@
  *
  * @type    {Object}
  */
+
+'use strict';
+
 var Amber = {};
 
 /**

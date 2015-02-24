@@ -4,6 +4,7 @@
  * @alias
  * @file    Alias to define a module that extends a View
  */
+'use strict';
 
 var _ = require('../modules/utilities');
 

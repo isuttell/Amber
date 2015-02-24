@@ -2,7 +2,10 @@
  * Get a Module
  */
 
+'use strict';
+
 module.exports = function(Amber) {
+
   /**
    * Module getter
    *
@@ -12,4 +15,4 @@ module.exports = function(Amber) {
   return function module(name) {
     return Amber.$$modules[name];
   };
-}
+};

@@ -4,6 +4,10 @@
 * @file    Pub/sub module
 */
 
+'use strict';
+
+var _ = require('./utilities');
+
 module.exports = {
   /**
    * Assign an event to this object. Supports multiple event changes
@@ -39,7 +43,7 @@ module.exports = {
    * @return    {this}
    */
   once: function(name, callback, context) {
-    var once = Amber.runOnce(function() {
+    var once = _.runOnce(function() {
       this.off(name, once);
       callback.apply(this, arguments);
     }, this);
@@ -65,7 +69,7 @@ module.exports = {
       this._events = {};
       return this;
     }
-    names = name ? [name] : Amber.keys(this._events);
+    names = name ? [name] : _.keys(this._events);
     for (i = 0, l = names.length; i < l; i++) {
       name = names[i];
       events = this._events[name];

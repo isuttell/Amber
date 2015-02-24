@@ -4,6 +4,8 @@
  * @file    Starts the application
  */
 
+'use strict';
+
 var _ = require('../modules/utilities');
 
 /**
@@ -17,17 +19,15 @@ var _ = require('../modules/utilities');
  * @return    {Array}
  */
 var getModuleNames = function(definitions, modules) {
+
   var names = [];
   var i = definitions.length;
   while (--i >= 0) {
     names.push(definitions[i].name);
   }
   // And add any existing module names
-  for (i in modules) {
-    if(modules.hasOwnProperty(i)) {
-      names.push(i);
-    }
-  }
+  names.concat(_.keys(modules));
+
   return names;
 };
 
@@ -58,7 +58,7 @@ var ModuleFactory = function(names, modules) {
     var d = definition.deps ? definition.deps.length : 0;
     while (--d >= 0) {
       if (names.indexOf(definition.deps[d]) === -1) {
-        throw new Error("Unable to find module: " + definition.deps[d]);
+        throw new Error('Unable to find module: ' + definition.deps[d]);
       } else if (false === _.isUndefined(modules[definition.deps[d]])) {
         definition.deps[d] = modules[definition.deps[d]];
       } else if (false === _.isUndefined(window[definition.deps[d]])) {
@@ -73,6 +73,32 @@ var ModuleFactory = function(names, modules) {
     } else {
       return false;
     }
+  };
+
+  /**
+   * Takes a created definition and tries to apply it
+   *
+   * @param     {Object}    definition    Object from `Amber.define` with deps
+   *
+   * @return    {Mixed|false}
+   */
+  this.apply = function(ctx, definition) {
+      // Check to see if the extend function is there
+      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+        definition = false;
+      }
+
+      if (false !== definition && _.isString(definition.extend)) {
+        // If the module is uses the `extend` module and defines then we apply it here
+        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
+        return true;
+      } else if (false !== definition) {
+        // If all of the modules dependencies are found then we apply it
+        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
+        return true;
+      } else {
+        return false;
+      }
   };
 };
 
@@ -98,7 +124,6 @@ module.exports = function(Amber) {
     delete Amber._modules;
 
     // Ensure the module directory exists
-    Amber.$$modules = Amber.$$modules || {};
     var modules = Amber.$$modules;
 
     // Save a list of all defined modules so we can check to see if new modules
@@ -118,18 +143,10 @@ module.exports = function(Amber) {
       // Check to see if the definition is ready to be applied
       var definition = factory.create(definitions[i]);
 
-      // Check to see if the extend function is there
-      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
-        definition = false;
-      }
+      // Try to apply deps
+      definition = factory.apply(Amber, definition);
 
-      if (false !== definition && _.isString(definition.extend)) {
-        // If the module is uses the `extend` module and defines then we apply it here
-        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(Amber, definition.deps));
-      } else if (false !== definition) {
-        // If all of the modules dependencies are found then we apply it
-        modules[definition.name] = definition.fn.apply(Amber, definition.deps);
-      } else {
+      if(false === definition) {
         // Otherwise we send it back to check later
         definitions.push(definitions[i]);
       }
@@ -139,7 +156,7 @@ module.exports = function(Amber) {
 
       // Ensure we don't hit an infinite loop if we can't resolve things
       if (i >= maxIterations) {
-        throw new Error("Unable to resolve dependencies");
+        throw new Error('Unable to resolve dependencies');
       }
     }
 
@@ -149,4 +166,4 @@ module.exports = function(Amber) {
     }
   };
 
-}
+};

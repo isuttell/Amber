@@ -59,6 +59,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @type    {Object}
 	 */
+
+	'use strict';
+
 	var Amber = {};
 
 	/**
@@ -115,6 +118,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @file    Module definition functions
 	 */
 
+	'use strict';
+
 	var _ = __webpack_require__(8);
 
 	module.exports = function(Amber) {
@@ -151,7 +156,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @file    Once `run` has been executed you can inject additional deps
 	 */
 
+	'use strict';
+
 	module.exports = function(Amber) {
+
+	  var getModule = __webpack_require__(4)(Amber);
 
 	  /**
 	   * Applys deps to fn
@@ -162,12 +171,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return function inject(deps, fn) {
 	    var i = deps.length;
 	    while (--i >= 0) {
-	      deps[i] = Amber.module(deps[i]);
+	      deps[i] = getModule(deps[i]);
 	    }
 	    fn.apply(Amber, deps);
 	  };
 
-	}
+	};
 
 
 /***/ },
@@ -178,7 +187,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Get a Module
 	 */
 
+	'use strict';
+
 	module.exports = function(Amber) {
+
 	  /**
 	   * Module getter
 	   *
@@ -188,7 +200,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return function module(name) {
 	    return Amber.$$modules[name];
 	  };
-	}
+	};
 
 
 /***/ },
@@ -200,6 +212,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @file    Starts the application
 	 */
+
+	'use strict';
 
 	var _ = __webpack_require__(8);
 
@@ -214,15 +228,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return    {Array}
 	 */
 	var getModuleNames = function(definitions, modules) {
+
 	  var names = [];
 	  var i = definitions.length;
 	  while (--i >= 0) {
 	    names.push(definitions[i].name);
 	  }
 	  // And add any existing module names
-	  for (i in modules) {
-	    names.push(i);
-	  }
+	  names.concat(_.keys(modules));
+
 	  return names;
 	};
 
@@ -253,7 +267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var d = definition.deps ? definition.deps.length : 0;
 	    while (--d >= 0) {
 	      if (names.indexOf(definition.deps[d]) === -1) {
-	        throw new Error("Unable to find module: " + definition.deps[d]);
+	        throw new Error('Unable to find module: ' + definition.deps[d]);
 	      } else if (false === _.isUndefined(modules[definition.deps[d]])) {
 	        definition.deps[d] = modules[definition.deps[d]];
 	      } else if (false === _.isUndefined(window[definition.deps[d]])) {
@@ -268,6 +282,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      return false;
 	    }
+	  };
+
+	  /**
+	   * Takes a created definition and tries to apply it
+	   *
+	   * @param     {Object}    definition    Object from `Amber.define` with deps
+	   *
+	   * @return    {Mixed|false}
+	   */
+	  this.apply = function(ctx, definition) {
+	      // Check to see if the extend function is there
+	      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+	        definition = false;
+	      }
+
+	      if (false !== definition && _.isString(definition.extend)) {
+	        // If the module is uses the `extend` module and defines then we apply it here
+	        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
+	        return true;
+	      } else if (false !== definition) {
+	        // If all of the modules dependencies are found then we apply it
+	        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
+	        return true;
+	      } else {
+	        return false;
+	      }
 	  };
 	};
 
@@ -293,7 +333,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    delete Amber._modules;
 
 	    // Ensure the module directory exists
-	    Amber.$$modules = Amber.$$modules || {};
 	    var modules = Amber.$$modules;
 
 	    // Save a list of all defined modules so we can check to see if new modules
@@ -313,13 +352,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Check to see if the definition is ready to be applied
 	      var definition = factory.create(definitions[i]);
 
-	      if (definition && false === _.isUndefined(definition.extend) && modules[definition.extend]) {
-	        // If the module is uses the `extend` module and defines then we apply it here
-	        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(Amber, definition.deps));
-	      } else if (definition && true === _.isUndefined(definition.extend)) {
-	        // If all of the modules dependencies are found then we apply it
-	        modules[definition.name] = definition.fn.apply(Amber, definition.deps);
-	      } else {
+	      // Try to apply deps
+	      definition = factory.apply(Amber, definition);
+
+	      if(false === definition) {
 	        // Otherwise we send it back to check later
 	        definitions.push(definitions[i]);
 	      }
@@ -329,7 +365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      // Ensure we don't hit an infinite loop if we can't resolve things
 	      if (i >= maxIterations) {
-	        throw new Error("Unable to resolve dependencies");
+	        throw new Error('Unable to resolve dependencies');
 	      }
 	    }
 
@@ -339,7 +375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
-	}
+	};
 
 
 /***/ },
@@ -352,6 +388,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @alias
 	 * @file    Alias to define a module that extends a View
 	 */
+	'use strict';
 
 	var _ = __webpack_require__(8);
 
@@ -380,35 +417,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @file    User Agent detection
 	 */
 
+	'use strict';
 
-	module.exports = (function(userAgent) {
+	module.exports = (function() {
 
-	    var Browser = {};
-	    Browser.$$check = function(userAgent) {
+	  var Browser = {};
+	  Browser.$$check = function(userAgent) {
 
-	      this.iOS = !!userAgent.match(/iPad|iPhone|iPod/i);
-	      this.iPhone = !!userAgent.match(/iPhone/i);
-	      this.iPad = !!userAgent.match(/iPad/i);
-	      this.android = !!userAgent.match(/Android/i);
-	      this.blackberry = !!userAgent.match(/BlackBerry/i);
-	      this.iemobile = !!userAgent.match(/IEMobile/i);
-	      this.firefox = !!userAgent.match(/Firefox/i);
-	      this.chrome = !!userAgent.match(/Chrome/i);
-	      this.safari = !!userAgent.match(/(Version\/\d\.\d.*Safari)/i);
-	      this.ie = userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/i) || false;
+	    this.iOS = !!userAgent.match(/iPad|iPhone|iPod/i);
+	    this.iPhone = !!userAgent.match(/iPhone/i);
+	    this.iPad = !!userAgent.match(/iPad/i);
+	    this.android = !!userAgent.match(/Android/i);
+	    this.blackberry = !!userAgent.match(/BlackBerry/i);
+	    this.iemobile = !!userAgent.match(/IEMobile/i);
+	    this.firefox = !!userAgent.match(/Firefox/i);
+	    this.chrome = !!userAgent.match(/Chrome/i);
+	    this.safari = !!userAgent.match(/(Version\/\d\.\d.*Safari)/i);
+	    this.ie = userAgent.match(/MSIE\s([0-9]{1,}[\.0-9]{0,})/i) || false;
 
-	      this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
+	    this.mobile = this.iOS || this.android || this.blackberry || this.iemobile;
 
-	      // Get the version number so we can use the <> operators
-	      if (this.ie) {
-	        this.ie = Math.floor(this.ie[1]);
-	      }
-
-	      return this;
+	    // Get the version number so we can use the <> operators
+	    if (this.ie) {
+	      this.ie = Math.floor(this.ie[1]);
 	    }
 
-	    return Browser.$$check(navigator.userAgent);
-	})(navigator.userAgent);
+	    return this;
+	  };
+
+	  return Browser.$$check(navigator.userAgent);
+	})();
 
 
 /***/ },
@@ -420,6 +458,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @file    Useful functions
 	 */
+
+	'use strict';
 
 	/**
 	 * Checks to see if an object is a specific type
@@ -538,6 +578,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	/**
+	 * Returns the keys/indexs from an object
+	 *
+	 * @param     {Object}    object
+	 *
+	 * @return    {Array}
+	 */
+	var keys = function(obj) {
+	  var result = [];
+	  var index;
+	  if (!isObject(obj)) {
+	    return obj;
+	  }
+
+	  for (index in obj) {
+	    if (obj.hasOwnProperty(index)) {
+	      result.push(index);
+	    }
+	  }
+	  return result;
+	};
+
+	/**
 	 * Extends multiple objects
 	 *
 	 * @param     {Object}    object     input
@@ -575,28 +637,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }
 
-	  return result;
-	};
-
-	/**
-	 * Returns the keys/indexs from an object
-	 *
-	 * @param     {Object}    object
-	 *
-	 * @return    {Array}
-	 */
-	var keys = function(obj) {
-	  var result = [];
-	  var index;
-	  if (!isObject(obj)) {
-	    return obj;
-	  }
-
-	  for (index in obj) {
-	    if (obj.hasOwnProperty(index)) {
-	      result.push(index);
-	    }
-	  }
 	  return result;
 	};
 
@@ -711,6 +751,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @file    Feature detection
 	 */
 
+	'use strict';
+
 	var _ = __webpack_require__(8);
 
 	/**
@@ -763,6 +805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	module.exports = (function(){
+
 	  var Supports = {};
 
 	  var keys = _.keys(featureTests);
@@ -787,12 +830,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	* @file    View module
 	*/
 
+	'use strict';
+
 	var _ = __webpack_require__(8);
-	var $ = __webpack_require__(12);
 
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 	function View(options) {
+
 	  this.id = _.uniqueId('view');
 
 	  // Default Options
@@ -877,7 +922,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.undelegateEvents();
 	    }
 
-	    this.$el = element instanceof $ ? element : $(element);
+	    this.$el = element instanceof window.$ ? element : window.$(element);
 	    this.el = this.$el[0];
 
 	    if (delegate === true) {
@@ -952,7 +997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	View.extend = __webpack_require__(13);
+	View.extend = __webpack_require__(12);
 
 	module.exports = View;
 
@@ -967,27 +1012,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @alias
 	 * @file    window wrapper
 	 */
+	'use strict';
 
-	module.exports = window
+	module.exports = window;
 
 
 /***/ },
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*****************************************************************************
-	 * jQuery
-	 *
-	 * @file    jQuery wrapper
-	 * @alias
-	 */
-
-	module.exports = window.jQuery || window.$;
-
-
-
-/***/ },
-/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -996,7 +1027,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @file    Allows a function to be extended such as View
 	 */
 
+	'use strict';
+
+	var _ = __webpack_require__(8);
+
 	var extend = function(protoProps, staticProps) {
+
 	  var parent = this;
 	  var child = function() {
 	    return parent.apply(this, arguments);

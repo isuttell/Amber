@@ -4,12 +4,14 @@
 * @file    View module
 */
 
+'use strict';
+
 var _ = require('./utilities');
-var $ = require('./jquery');
 
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 function View(options) {
+
   this.id = _.uniqueId('view');
 
   // Default Options
@@ -94,7 +96,7 @@ _.assign(View.prototype, {
       this.undelegateEvents();
     }
 
-    this.$el = element instanceof $ ? element : $(element);
+    this.$el = element instanceof window.$ ? element : window.$(element);
     this.el = this.$el[0];
 
     if (delegate === true) {

@@ -1,14 +1,15 @@
 {
 	"camelcase" : true,
 	"newcap"    : true,
-	"strict"    : false,
+	"strict"    : true,
 	"trailing"  : true,
 	"browser"   : true,
+  "node"      : true,
 	"jquery"    : true,
 	"undef"     : true,
 	"unused"    : true,
-	"quotmark"  : false,
-	"maxcomplexity": 10,
+	"quotmark"  : true,
+	"maxcomplexity": 6,
 	"globals"   : {
     "module" : true,
 		"require" : false

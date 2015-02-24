@@ -4,6 +4,8 @@
  * @file    Useful functions
  */
 
+'use strict';
+
 /**
  * Checks to see if an object is a specific type
  *
@@ -121,6 +123,28 @@ var results = function(obj, name, context) {
 };
 
 /**
+ * Returns the keys/indexs from an object
+ *
+ * @param     {Object}    object
+ *
+ * @return    {Array}
+ */
+var keys = function(obj) {
+  var result = [];
+  var index;
+  if (!isObject(obj)) {
+    return obj;
+  }
+
+  for (index in obj) {
+    if (obj.hasOwnProperty(index)) {
+      result.push(index);
+    }
+  }
+  return result;
+};
+
+/**
  * Extends multiple objects
  *
  * @param     {Object}    object     input
@@ -158,28 +182,6 @@ var assign = function(object) {
     }
   }
 
-  return result;
-};
-
-/**
- * Returns the keys/indexs from an object
- *
- * @param     {Object}    object
- *
- * @return    {Array}
- */
-var keys = function(obj) {
-  var result = [];
-  var index;
-  if (!isObject(obj)) {
-    return obj;
-  }
-
-  for (index in obj) {
-    if (obj.hasOwnProperty(index)) {
-      result.push(index);
-    }
-  }
   return result;
 };
 

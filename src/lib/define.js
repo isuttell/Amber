@@ -4,6 +4,8 @@
  * @file    Module definition functions
  */
 
+'use strict';
+
 var _ = require('../modules/utilities');
 
 module.exports = function(Amber) {

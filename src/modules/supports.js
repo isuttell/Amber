@@ -4,6 +4,8 @@
  * @file    Feature detection
  */
 
+'use strict';
+
 var _ = require('./utilities');
 
 /**
@@ -56,6 +58,7 @@ var featureTests = {
 };
 
 module.exports = (function(){
+
   var Supports = {};
 
   var keys = _.keys(featureTests);
