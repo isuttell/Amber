@@ -99,9 +99,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'jQuery' : __webpack_require__(3),
 	  '$browser': __webpack_require__(9),
 	  '$utilities' : __webpack_require__(1),
-	  '$supports' : __webpack_require__(10),
-	  '$view' : __webpack_require__(11),
-	  '$window' : __webpack_require__(12)
+	  '$supports' : __webpack_require__(11),
+	  '$view' : __webpack_require__(12),
+	  '$window' : __webpack_require__(13)
 	};
 
 	module.exports = Amber;
@@ -145,9 +145,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Checks to see if a var is a string
 	 *
-	 * @param  {String}  str var to check
+	 * @param  {String}  str   var to check
 	 *
-	 * @return {Boolean}     [description]
+	 * @return {Boolean}
 	 */
 	var isString = function(str) {
 	  return isType(str, 'String');
@@ -156,9 +156,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Checks to see if a var is a string
 	 *
-	 * @param  {String}  str var to check
+	 * @param  {Function}  fn   var to check
 	 *
-	 * @return {Boolean}     [description]
+	 * @return {Boolean}
 	 */
 	var isFunction = function(fn) {
 	  return isType(fn, 'Function');
@@ -238,7 +238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Returns the keys/indexs from an object
 	 *
-	 * @param     {Object}    object
+	 * @param     {Object}    obj
 	 *
 	 * @return    {Array}
 	 */
@@ -301,7 +301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Returns the values from an object
 	 *
-	 * @param     {Object}    object
+	 * @param     {Object}    obj
 	 *
 	 * @return    {Array}
 	 */
@@ -348,7 +348,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var uniqueId = function(name) {
 	  return (name || 'id') + (++_uniqueId);
 	};
-
 
 	/**
 	 * Check to see if an image is already loaded
@@ -447,7 +446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  return function define(name, deps, fn, extend) {
 	    // Optional args
-	    if(_.isFunction(deps)){
+	    if (_.isFunction(deps)) {
 	      fn = deps;
 	      deps = [];
 	    }
@@ -630,27 +629,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Takes a created definition and tries to apply it
 	   *
+	   * @param     {Mixed}     ctx
 	   * @param     {Object}    definition    Object from `Amber.define` with deps
 	   *
 	   * @return    {Mixed|false}
 	   */
 	  this.apply = function(ctx, definition) {
-	      // Check to see if the extend function is there
-	      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
-	        definition = false;
-	      }
+	    // Check to see if the extend function is there
+	    if (false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+	      definition = false;
+	    }
 
-	      if (false !== definition && _.isString(definition.extend)) {
-	        // If the module is uses the `extend` module and defines then we apply it here
-	        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
-	        return true;
-	      } else if (false !== definition) {
-	        // If all of the modules dependencies are found then we apply it
-	        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
-	        return true;
-	      } else {
-	        return false;
-	      }
+	    if (false !== definition && _.isString(definition.extend)) {
+	      // If the module is uses the `extend` module and defines then we apply it here
+	      modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
+	      return true;
+	    } else if (false !== definition) {
+	      // If all of the modules dependencies are found then we apply it
+	      modules[definition.name] = definition.fn.apply(ctx, definition.deps);
+	      return true;
+	    } else {
+	      return false;
+	    }
 	  };
 	};
 
@@ -698,7 +698,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Try to apply deps
 	      definition = factory.apply(Amber, definition);
 
-	      if(false === definition) {
+	      if (false === definition) {
 	        // Otherwise we send it back to check later
 	        definitions.push(definitions[i]);
 	      }
@@ -739,7 +739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  return function View(name, deps, fn) {
 	    // Optional args
-	    if(_.isFunction(deps)){
+	    if (_.isFunction(deps)) {
 	      fn = deps;
 	      deps = [];
 	    }
@@ -794,6 +794,152 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*****************************************************************************
+	 * Events
+	 *
+	 * @file    Pub/sub module
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	module.exports = {
+	  /**
+	   * Assign an event to this object. Supports multiple event changes
+	   *
+	   * @param     {String}      name
+	   * @param     {Function}    callback
+	   * @param     {Mixed}       context
+	   * @chainable
+	   * @return    {this}
+	   */
+	  on: function(name, callback, context) {
+	    if (!callback) {
+	      return this;
+	    }
+	    this._events = this._events || {};
+	    var events = this._events[name] || (this._events[name] = []);
+	    events.push({
+	      callback: callback,
+	      context: context,
+	      ctx: context || this
+	    });
+
+	    return this;
+	  },
+
+	  /**
+	   * Trigger an event once
+	   *
+	   * @param     {String}      name
+	   * @param     {Function}    callback
+	   * @param     {Mixed}       context
+	   * @chainable
+	   * @return    {this}
+	   */
+	  once: function(name, callback, context) {
+	    var once = _.runOnce(function() {
+	      this.off(name, once);
+	      callback.apply(this, arguments);
+	    }, this);
+	    once._callback = callback;
+	    return this.on(name, once, context);
+	  },
+
+	  /**
+	   * Turn off an event
+	   *
+	   * @param     {String}      name
+	   * @param     {Function}    callback
+	   */
+	  off: function(name, callback) {
+	    var retain;
+	    var ev;
+	    var events;
+	    var names;
+
+	    // No events
+	    if (!this._events) {
+	      return this;
+	    }
+
+	    // Turn it all off
+	    if (!name && !callback) {
+	      this._events = {};
+	      return this;
+	    }
+
+	    // Event names either the event or all of the events
+	    names = name ? [name] : _.keys(this._events);
+
+	    // Loop through event names
+	    for (var i = 0, l = names.length; i < l; i++) {
+	      name = names[i];
+	      events = this._events[name];
+
+	      if (!events) {
+	        // Skip if we have no events
+	        continue;
+	      }
+
+	      // Empty and refill below
+	      this._events[name] = retain = [];
+
+	      // If we have a callback search for it
+	      if (callback) {
+	        // Loop through individual callbacks per event
+	        for (var j = 0, k = events.length; j < k; j++) {
+	          ev = events[j];
+	          if (callback !== ev.callback && callback !== ev.callback._callback) {
+	            retain.push(ev);
+	          }
+	          ev = void 0;
+	        }
+	      }
+
+	      // No events? Delete
+	      if (!retain.length) {
+	        delete this._events[name];
+	      }
+
+	      retain = void 0;
+	    }
+
+	    return this;
+	  },
+
+	  /**
+	   * Trigger an event
+	   * @param  {string}   name
+	   * @return {this}     return this so we can chain
+	   */
+	  trigger: function(name) {
+	    if (!this._events) {
+	      return this;
+	    }
+	    var args = [].slice.call(arguments, 1);
+	    var events = this._events[name];
+
+	    // Dispatch
+	    if (events) {
+	      var ev;
+	      var i = -1;
+	      var l = events.length;
+	      while (++i < l) {
+	        (ev = events[i]).callback.apply(ev.ctx, args);
+	      }
+	    }
+
+	    return this;
+	  }
+	};
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
@@ -855,14 +1001,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 
-	module.exports = (function(){
+	module.exports = (function() {
 
 	  var Supports = {};
 
 	  var keys = _.keys(featureTests);
 	  var index = -1;
 	  var length = keys.length;
-	  while(++index < length) {
+	  while (++index < length) {
 	    var feature = keys[index];
 	    Supports[feature] = _.results(featureTests, feature);
 	  }
@@ -872,18 +1018,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************
-	* View
-	*
-	* @file    View module
-	*/
+	 * View
+	 *
+	 * @file    View module
+	 */
 
 	'use strict';
 
 	var _ = __webpack_require__(1);
+	var $events = __webpack_require__(10);
 
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -904,7 +1051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.delegateEvents();
 	}
 
-	_.assign(View.prototype, {
+	_.assign(View.prototype, $events, {
 	  /**
 	   * Default element type
 	   * @type {String}
@@ -925,7 +1072,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /**
 	   * Data to be rendered
-	   * @type {Object}
+	   *
+	   * @type {Model}
 	   */
 	  model: {},
 
@@ -936,11 +1084,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /**
 	   * Default rendering function
+	   *
+	   * TODO
+	   *  - Fix Template
 	   */
 	  render: function() {
-	    var data = {};
-	    data = this.model || {};
-	    this.$el.html(_.template(this.template, data));
+	    this.$el.html(_.template(this.template));
 	    return this;
 	  },
 
@@ -989,12 +1138,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _ensureElement: function() {
 	    if (!this.$el) {
 	      var attrs = _.assign({}, _.results(this, 'attributes'));
-	      if (this.id) {
-	        attrs.id = _.results(this, 'id');
-	      }
+
+	      attrs.id = _.results(this, 'id');
+
 	      if (this.className) {
 	        attrs['class'] = _.results(this, 'className');
 	      }
+
 	      var $el = $('<' + _.results(this, 'tagName') + '>').attr(attrs);
 	      this.setElement($el, false);
 	    } else {
@@ -1006,7 +1156,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Turn off events for this view
 	   */
 	  undelegateEvents: function() {
-	    this.$el.off('.delegateEvents' + this.cid);
+	    this.$el.off('.amberEvents' + this.id);
 	    return this;
 	  },
 
@@ -1014,7 +1164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Attach events to the DOM
 	   */
 	  delegateEvents: function() {
-	    if(!this.el) {
+	    if (!this.el) {
 	      return this;
 	    }
 	    // Undelegate existing events so we don't double up
@@ -1034,7 +1184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eventName = match[1];
 	        var selector = match[2];
 
-	        eventName += '.delegateEvents' + this.cid;
+	        eventName += '.amberEvents' + this.id;
 
 	        // If not selector is found attach it to the entire view
 	        if (selector === '') {
@@ -1054,7 +1204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*****************************************************************************

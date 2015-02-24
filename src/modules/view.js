@@ -7,6 +7,7 @@
 'use strict';
 
 var _ = require('./utilities');
+var $events = require('./events');
 
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -27,7 +28,7 @@ function View(options) {
   this.delegateEvents();
 }
 
-_.assign(View.prototype, {
+_.assign(View.prototype, $events, {
   /**
    * Default element type
    * @type {String}
@@ -48,7 +49,8 @@ _.assign(View.prototype, {
 
   /**
    * Data to be rendered
-   * @type {Object}
+   *
+   * @type {Model}
    */
   model: {},
 
@@ -59,11 +61,12 @@ _.assign(View.prototype, {
 
   /**
    * Default rendering function
+   *
+   * TODO
+   *  - Fix Template
    */
   render: function() {
-    var data = {};
-    data = this.model || {};
-    this.$el.html(_.template(this.template, data));
+    this.$el.html(_.template(this.template));
     return this;
   },
 
@@ -112,12 +115,13 @@ _.assign(View.prototype, {
   _ensureElement: function() {
     if (!this.$el) {
       var attrs = _.assign({}, _.results(this, 'attributes'));
-      if (this.id) {
-        attrs.id = _.results(this, 'id');
-      }
+
+      attrs.id = _.results(this, 'id');
+
       if (this.className) {
         attrs['class'] = _.results(this, 'className');
       }
+
       var $el = $('<' + _.results(this, 'tagName') + '>').attr(attrs);
       this.setElement($el, false);
     } else {
@@ -129,7 +133,7 @@ _.assign(View.prototype, {
    * Turn off events for this view
    */
   undelegateEvents: function() {
-    this.$el.off('.delegateEvents' + this.cid);
+    this.$el.off('.amberEvents' + this.id);
     return this;
   },
 
@@ -157,7 +161,7 @@ _.assign(View.prototype, {
         var eventName = match[1];
         var selector = match[2];
 
-        eventName += '.delegateEvents' + this.cid;
+        eventName += '.amberEvents' + this.id;
 
         // If not selector is found attach it to the entire view
         if (selector === '') {
