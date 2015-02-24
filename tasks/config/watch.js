@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
       files: ['src/**/*.js', 'test/specs/**/*.js'],
 
-      tasks: ['webpack', 'karma:watch:run', 'jshint']
+      tasks: ['webpack:dev', 'karma:watch:run', 'jshint']
     }
 
   });

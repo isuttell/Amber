@@ -11,8 +11,9 @@
 module.exports = function(grunt) {
 
   grunt.config.set('webpack', {
-    Amber: {
+    options: {
       entry: './src/index.js',
+      profile: true,
       output: {
         path: './',
         filename: 'Amber.js',
@@ -22,6 +23,18 @@ module.exports = function(grunt) {
       externals: {
         'jquery' : "jQuery"
       },
+      stats: {
+        colors: true,
+        modules: true,
+        reasons: true
+      },
+    },
+    build: {
+      profile: false,
+      stats: false
+    },
+    dev: {
+      profile: true,
       stats: {
         colors: true,
         modules: true,

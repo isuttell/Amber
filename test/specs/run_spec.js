@@ -7,12 +7,9 @@ describe('lib/run', function() {
   Amber.View = require('../../src/lib/view')(Amber);
 
   beforeEach(function(){
-    if(Amber.$$modules) {
-      delete Amber.$$modules;
-    }
     Amber.$$modules = {
       '$view' : require('../../src/modules/view.js'),
-      'Test': 'test'
+      'Test': function(){}
     }
   });
 
@@ -36,8 +33,6 @@ describe('lib/run', function() {
     Amber.define('NewModule3', ['NewModule2'], fn3);
     Amber.define('NewModule', ['Test'], fn);
     Amber.define('NewModule2', ['NewModule'], fn2);
-
-    console.log(Amber._modules);
 
     Amber.run(['NewModule', 'NewModule2', 'NewModule3'], function(NewModule, NewModule2, NewModule3){
       expect(NewModule).toBe(1);
@@ -73,7 +68,7 @@ describe('lib/run', function() {
   describe('errors', function(){
     it('should throw an error if it can not find a module name', function(){
       var fn = function() { return 1; };
-      Amber.define('Test', ['BadName'], fn);
+      Amber.define('ErrorTest', ['BadName'], fn);
       expect(function(){ Amber.run(); }).toThrow(new Error('Unable to find module: BadName'));
     });
   })

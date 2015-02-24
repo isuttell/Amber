@@ -13,6 +13,9 @@ module.exports = function(config) {
     },
 
     webpack: {
+      stats: false,
+      progess: false,
+      profile: false,
       externals: {
         'jquery': "jQuery"
       },

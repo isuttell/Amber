@@ -235,7 +235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    names.push(definitions[i].name);
 	  }
 	  // And add any existing module names
-	  names.concat(_.keys(modules));
+	  names = names.concat(_.keys(modules));
 
 	  return names;
 	};

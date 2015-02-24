@@ -26,7 +26,7 @@ var getModuleNames = function(definitions, modules) {
     names.push(definitions[i].name);
   }
   // And add any existing module names
-  names.concat(_.keys(modules));
+  names = names.concat(_.keys(modules));
 
   return names;
 };
