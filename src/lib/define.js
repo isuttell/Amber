@@ -12,7 +12,7 @@ module.exports = function(Amber) {
 
   return function define(name, deps, fn, extend) {
     // Optional args
-    if(_.isFunction(deps)){
+    if (_.isFunction(deps)) {
       fn = deps;
       deps = [];
     }

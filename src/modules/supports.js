@@ -57,14 +57,14 @@ var featureTests = {
   }
 };
 
-module.exports = (function(){
+module.exports = (function() {
 
   var Supports = {};
 
   var keys = _.keys(featureTests);
   var index = -1;
   var length = keys.length;
-  while(++index < length) {
+  while (++index < length) {
     var feature = keys[index];
     Supports[feature] = _.results(featureTests, feature);
   }

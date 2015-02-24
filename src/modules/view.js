@@ -1,8 +1,8 @@
 /*****************************************************************************
-* View
-*
-* @file    View module
-*/
+ * View
+ *
+ * @file    View module
+ */
 
 'use strict';
 
@@ -137,7 +137,7 @@ _.assign(View.prototype, {
    * Attach events to the DOM
    */
   delegateEvents: function() {
-    if(!this.el) {
+    if (!this.el) {
       return this;
     }
     // Undelegate existing events so we don't double up

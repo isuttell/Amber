@@ -78,27 +78,28 @@ var ModuleFactory = function(names, modules) {
   /**
    * Takes a created definition and tries to apply it
    *
+   * @param     {Mixed}     ctx
    * @param     {Object}    definition    Object from `Amber.define` with deps
    *
    * @return    {Mixed|false}
    */
   this.apply = function(ctx, definition) {
-      // Check to see if the extend function is there
-      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
-        definition = false;
-      }
+    // Check to see if the extend function is there
+    if (false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+      definition = false;
+    }
 
-      if (false !== definition && _.isString(definition.extend)) {
-        // If the module is uses the `extend` module and defines then we apply it here
-        modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
-        return true;
-      } else if (false !== definition) {
-        // If all of the modules dependencies are found then we apply it
-        modules[definition.name] = definition.fn.apply(ctx, definition.deps);
-        return true;
-      } else {
-        return false;
-      }
+    if (false !== definition && _.isString(definition.extend)) {
+      // If the module is uses the `extend` module and defines then we apply it here
+      modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(ctx, definition.deps));
+      return true;
+    } else if (false !== definition) {
+      // If all of the modules dependencies are found then we apply it
+      modules[definition.name] = definition.fn.apply(ctx, definition.deps);
+      return true;
+    } else {
+      return false;
+    }
   };
 };
 
@@ -146,7 +147,7 @@ module.exports = function(Amber) {
       // Try to apply deps
       definition = factory.apply(Amber, definition);
 
-      if(false === definition) {
+      if (false === definition) {
         // Otherwise we send it back to check later
         definitions.push(definitions[i]);
       }

@@ -32,9 +32,9 @@ var isObject = function(obj) {
 /**
  * Checks to see if a var is a string
  *
- * @param  {String}  str var to check
+ * @param  {String}  str   var to check
  *
- * @return {Boolean}     [description]
+ * @return {Boolean}
  */
 var isString = function(str) {
   return isType(str, 'String');
@@ -43,9 +43,9 @@ var isString = function(str) {
 /**
  * Checks to see if a var is a string
  *
- * @param  {String}  str var to check
+ * @param  {Function}  fn   var to check
  *
- * @return {Boolean}     [description]
+ * @return {Boolean}
  */
 var isFunction = function(fn) {
   return isType(fn, 'Function');
@@ -125,7 +125,7 @@ var results = function(obj, name, context) {
 /**
  * Returns the keys/indexs from an object
  *
- * @param     {Object}    object
+ * @param     {Object}    obj
  *
  * @return    {Array}
  */
@@ -188,7 +188,7 @@ var assign = function(object) {
 /**
  * Returns the values from an object
  *
- * @param     {Object}    object
+ * @param     {Object}    obj
  *
  * @return    {Array}
  */
@@ -235,7 +235,6 @@ var _uniqueId = 0;
 var uniqueId = function(name) {
   return (name || 'id') + (++_uniqueId);
 };
-
 
 /**
  * Check to see if an image is already loaded

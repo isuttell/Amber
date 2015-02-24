@@ -1,8 +1,8 @@
 /*****************************************************************************
-* Events
-*
-* @file    Pub/sub module
-*/
+ * Events
+ *
+ * @file    Pub/sub module
+ */
 
 'use strict';
 
@@ -19,7 +19,7 @@ module.exports = {
    * @return    {this}
    */
   on: function(name, callback, context) {
-    if(!callback) {
+    if (!callback) {
       return this;
     }
     this._events = this._events || {};
@@ -116,7 +116,6 @@ module.exports = {
   /**
    * Trigger an event
    * @param  {string}   name
-   * @params {Mixex...}
    * @return {this}     return this so we can chain
    */
   trigger: function(name) {
@@ -139,4 +138,3 @@ module.exports = {
     return this;
   }
 };
-
