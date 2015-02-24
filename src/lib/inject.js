@@ -6,6 +6,8 @@
 
 module.exports = function(Amber) {
 
+  var getModule = require('./module')(Amber);
+
   /**
    * Applys deps to fn
    *
@@ -15,7 +17,7 @@ module.exports = function(Amber) {
   return function inject(deps, fn) {
     var i = deps.length;
     while (--i >= 0) {
-      deps[i] = Amber.module(deps[i]);
+      deps[i] = getModule(deps[i]);
     }
     fn.apply(Amber, deps);
   };

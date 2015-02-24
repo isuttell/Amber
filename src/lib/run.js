@@ -24,7 +24,9 @@ var getModuleNames = function(definitions, modules) {
   }
   // And add any existing module names
   for (i in modules) {
-    names.push(i);
+    if(modules.hasOwnProperty(i)) {
+      names.push(i);
+    }
   }
   return names;
 };
@@ -116,10 +118,15 @@ module.exports = function(Amber) {
       // Check to see if the definition is ready to be applied
       var definition = factory.create(definitions[i]);
 
-      if (definition && false === _.isUndefined(definition.extend) && modules[definition.extend]) {
+      // Check to see if the extend function is there
+      if(false !== definition && _.isString(definition.extend) && !_.isFunction(modules[definition.extend])) {
+        definition = false;
+      }
+
+      if (false !== definition && _.isString(definition.extend)) {
         // If the module is uses the `extend` module and defines then we apply it here
         modules[definition.name] = modules[definition.extend].extend(definition.fn.apply(Amber, definition.deps));
-      } else if (definition && true === _.isUndefined(definition.extend)) {
+      } else if (false !== definition) {
         // If all of the modules dependencies are found then we apply it
         modules[definition.name] = definition.fn.apply(Amber, definition.deps);
       } else {

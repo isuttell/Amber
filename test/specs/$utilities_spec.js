@@ -301,4 +301,30 @@ describe("modules/utilities", function() {
       });
     });
   });
+
+  describe("isImageLoaded", function() {
+    it('should return false if image is not complete', function() {
+      var img = {
+        complete: false
+      };
+
+      expect(Utilities.isImageLoaded(img)).toBe(false);
+    });
+
+    it('should return true if image is complete', function() {
+      var img = {
+        complete: true
+      };
+
+      expect(Utilities.isImageLoaded(img)).toBe(true);
+    });
+
+    it('should return false natural width is 0', function() {
+      var img = {
+        complete: true,
+        naturalWidth: 0
+      };
+      expect(Utilities.isImageLoaded(img)).toBe(false);
+    });
+  });
 });

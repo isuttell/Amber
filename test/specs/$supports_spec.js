@@ -1,6 +1,6 @@
 var Supports = require('../../src/modules/supports');
 
-describe("Supports", function() {
+describe("modules/", function() {
 
   it("should detect svg support", function() {
     expect(Supports.svg).toBeDefined();

@@ -1,6 +1,6 @@
 var Browser = require('../../src/modules/browser');
 
-describe("Browser", function() {
+describe("modules/browser", function() {
 
   it("should define standard browsers", function() {
     expect(Browser.iOS).toBeDefined();
