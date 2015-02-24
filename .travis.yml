@@ -1,9 +1,12 @@
 language: node_js
 node_js:
   - 0.10
+env:
+ - NODE_ENV=test CODACY_REPO_TOKEN=7b0688d4a8c742009b161c2e4f121180
 addons:
   code_climate:
-    repo_token: repo_token: e2735dfe6be17d039cc972fc1f214f8e75aded9285dd885cfdb99a4fc3ef7c87
+    repo_token: e2735dfe6be17d039cc972fc1f214f8e75aded9285dd885cfdb99a4fc3ef7c87
 after_script:
-  - NODE_ENV=test cat ./test/coverage/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - cat ./test/coverage/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - cat ./test/coverage/lcov/lcov.info | ./node_modules/codeclimate-test-reporter/bin/codeclimate.js
+  - cat ./test/coverage/lcov/lcov.info | ./node_modules/codacy-coverage/bin/codacy-coverage.js

@@ -14,6 +14,7 @@
   "author": "Isaac Suttell <isaac@isaacsuttell.com>",
   "readmeFilename": "README.md",
   "devDependencies": {
+    "codacy-coverage": "^1.0.3",
     "codeclimate-test-reporter": "0.0.4",
     "coveralls": "^2.11.2",
     "grunt-cli": "~0.1.13",
@@ -24,6 +25,8 @@
     "grunt-jscs": "^0.8.1",
     "grunt-karma": "^0.9.0",
     "grunt-webpack": "^1.0.8",
+    "istanbul": "^0.3.6",
+    "istanbul-instrumenter-loader": "^0.1.2",
     "jit-grunt": "^0.8.0",
     "karma": "~0.12.23",
     "karma-chrome-launcher": "^0.1.4",
@@ -37,8 +40,6 @@
     "karma-webpack": "^1.5.0",
     "time-grunt": "^0.4.0",
     "webpack": "^1.6.0",
-    "webpack-dev-server": "^1.7.0",
-    "istanbul": "^0.3.6",
-    "istanbul-instrumenter-loader": "^0.1.2"
+    "webpack-dev-server": "^1.7.0"
   }
 }
